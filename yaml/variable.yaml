@@ -1,0 +1,11 @@
+garbage_day_notification:
+  name: Garbage Tomorrow
+  value: False
+  attributes:
+    icon: mdi:delete
+
+recycling_day_notification:
+  name: Recycling Tomorrow
+  value: False
+  attributes:
+    icon: mdi:recycle-variant

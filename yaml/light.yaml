@@ -1,0 +1,6 @@
+- platform: group
+  name: Fan Light
+  entities:
+    - light.fan_bulb_1
+    - light.fan_bulb_2
+    - light.fan_bulb_3

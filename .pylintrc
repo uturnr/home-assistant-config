@@ -1,0 +1,3 @@
+disable=missing-module-docstring
+
+additional-builtins=data,logger,hass

@@ -1,0 +1,39 @@
+- id: '1601439026093'
+  name: Bedroom Bright
+  entities:
+    light.bedroom_light:
+      brightness: 255
+      node_id: 5
+      friendly_name: Bedroom Light
+      supported_features: 33
+      state: 'on'
+  icon: mdi:lightbulb-on
+- id: '1601439405876'
+  name: Bedroom Dim
+  entities:
+    light.bedroom_light:
+      brightness: 90
+      node_id: 5
+      friendly_name: Bedroom Light
+      supported_features: 33
+      state: 'on'
+  icon: mdi:lightbulb
+- id: '1603765966306'
+  name: Bedroom Ultra-Dim
+  entities:
+    light.bedroom_light:
+      brightness: 52
+      node_id: 5
+      friendly_name: Bedroom Light
+      supported_features: 33
+      state: 'on'
+  icon: mdi:moon-waning-crescent
+- id: '1604470803093'
+  name: Bedroom Off
+  entities:
+    light.bedroom_light:
+      node_id: 5
+      friendly_name: Bedroom Light
+      supported_features: 33
+      state: 'off'
+  icon: mdi:lightbulb-off

@@ -1,0 +1,7 @@
+set_wakeup_time:
+  speech:
+    text: Set to {{ as_timestamp(time) | timestamp_custom("%H:%M") }}
+  action:
+    - event: update_wakeup_time
+      event_data:
+        wakeup_time: '{{ as_timestamp(time) | timestamp_custom("%H:%M") }}'

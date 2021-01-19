@@ -1,0 +1,51 @@
+shuffle_music_on_tv:
+  alias: Shuffle Music on TV
+  icon: mdi:music-box-multiple
+  sequence:
+  - service: media_player.turn_on
+    entity_id: media_player.living_room_tv
+  - service: media_player.select_source
+    entity_id: media_player.living_room_tv
+    data:
+      source: Plex - Stream for Free
+  - wait_template: "{{ is_state('media_player.living_room_tv', 'on') }}"
+    timeout: '00:00:10'
+  - service: plex.scan_for_clients
+  - wait_template: "{{ not is_state('media_player.plex_plex_for_roku_living_room_tv', 'unavailable') }}"
+    timeout: '00:00:10'
+    continue_on_timeout: false
+  - service: media_player.play_media
+    entity_id: media_player.plex_plex_for_roku_living_room_tv
+    data:
+      media_content_type: playlist
+      media_content_id: '{ "playlist_name": "All Music", "shuffle": "1" }'
+spotify_tv:
+  alias: Play Spotify on TV
+  icon: mdi:music-box-multiple
+  sequence:
+    - service: media_player.turn_on
+      entity_id: media_player.living_room_tv
+    - service: media_player.select_source
+      entity_id: media_player.living_room_tv
+      data:
+        source: Spotify Music
+    - delay: 00:00:05
+    - service: remote.send_command
+      entity_id: remote.living_room_tv
+      data: 
+        command: select
+    - delay: 00:00:05
+    - service: remote.send_command
+      entity_id: remote.living_room_tv
+      data: 
+        command: down
+    - delay: 00:00:05
+    - service: remote.send_command
+      entity_id: remote.living_room_tv
+      data: 
+        command: select
+    - delay: 00:00:05
+    - service: remote.send_command
+      entity_id: remote.living_room_tv
+      data: 
+        command: select

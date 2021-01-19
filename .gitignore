@@ -1,0 +1,33 @@
+# Generic ignores
+*.log
+*.db
+*.db-shm
+*.db-wal
+*.pyc
+._*
+__pycache__
+.vscode
+
+# Logs
+*.log
+logs
+
+# Folders
+.storage
+.cloud
+deps
+image
+tts
+
+# Files
+pyozw.sqlite
+options.xml
+zwcfg_*
+zwscene.xml
+
+# Secrets
+ip_bans.yaml
+secrets.yaml
+known_devices.yaml
+yaml/gcp-service-account.json
+secrets.py

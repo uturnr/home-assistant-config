@@ -1,0 +1,13 @@
+bedroom_notification:
+  name: Bedroom Notification
+  mode: box
+  min: 0
+  max: 100600575
+  step: 1
+
+wakeup_duration:
+  name: Wake up duration
+  mode: box
+  min: 0
+  max: 60
+  step: 1

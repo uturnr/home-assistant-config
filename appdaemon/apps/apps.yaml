@@ -1,0 +1,23 @@
+---
+
+get_waste_schedule:
+  module: get_waste_schedule
+  class: GetWasteSchedule
+  dependencies: Secrets
+
+light_switch_notification_manager:
+  module: light_switch_notification_manager
+  class: LightSwitchNotificationManager
+
+secrets:
+  module: secrets
+  class: Secrets
+
+time_manager:
+  module: time_manager
+  class: TimeManager
+  dependencies: WakeupService
+
+wakeup_service:
+  module: wakeup_service
+  class: WakeupService

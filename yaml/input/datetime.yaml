@@ -1,0 +1,4 @@
+wakeup_time:
+  name: "Wake up time"
+  has_time: true
+  has_date: false

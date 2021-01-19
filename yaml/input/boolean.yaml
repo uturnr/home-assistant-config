@@ -1,0 +1,15 @@
+wakeup_enabled:
+  name: "Wake-up lights"
+  icon: mdi:theme-light-dark
+wakeup_weekend:
+  name: "Enable Wake-up on weekends"
+  icon: mdi:calendar-blank
+wakeup_music:
+  name: "Enable music with wakeup"
+  icon: mdi:music
+wakeup_shower_heater:
+  name: "Enable Shower Heater"
+  icon: mdi:shower-head
+front_door_motion:
+  name: "Front Door Camera Motion"
+  icon: mdi:eye

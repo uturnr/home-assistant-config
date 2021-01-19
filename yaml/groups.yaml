@@ -1,0 +1,8 @@
+alarm_clock:
+  name: "Wake-up"
+  entities:
+    - input_datetime.wakeup_time
+    - input_boolean.wakeup_enabled
+    - input_boolean.wakeup_weekend
+    - input_boolean.wakeup_music
+    - input_boolean.wakeup_shower_heater

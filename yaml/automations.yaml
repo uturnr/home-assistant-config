@@ -1,0 +1,113 @@
+- id: start_homekit
+  alias: 'Start HomeKit'
+  trigger:
+  - event: start
+    platform: homeassistant
+  action:
+  - wait_template: "{{ is_state('binary_sensor.ozw_network_ready', 'on') }}"
+    timeout: 00:10:00
+  - service: homekit.start
+- id: bedroom_bright
+  alias: Bedroom bright on double-tap up
+  trigger:
+  - platform: event
+    event_data:
+      node_id: 5
+      scene_id: 2
+      scene_label: Scene 2
+      scene_value_id: 4
+      scene_value_label: Pressed 2 Times
+    event_type: ozw.scene_activated
+  action:
+  - scene: scene.bedroom_bright
+- id: bedroom_dim
+  alias: Bedroom dim on double-tap down
+  trigger:
+  - platform: event
+    event_data:
+      node_id: 5
+      scene_id: 1
+      scene_label: Scene 1
+      scene_value_id: 4
+      scene_value_label: Pressed 2 Times
+    event_type: ozw.scene_activated
+  action:
+  - scene: scene.bedroom_dim
+- id: play_music_when_home
+  alias: Play music when I get home
+  trigger:
+  - platform: zone
+    entity_id: person.me
+    zone: zone.home
+    event: enter
+  condition:
+  - condition: or
+    conditions:
+    - condition: time
+      after: 00:00:00
+      before: 08:00:00
+    - condition: time
+      after: '10:00:00'
+      before: '23:59:59'
+  action:
+  - service: script.spotify_tv
+  mode: single
+- id: event_update_wakeup_time
+  alias: Update wakeup time when event triggered (for updating via Google Assistant).
+  trigger:
+    platform: event
+    event_type: update_wakeup_time
+  action:
+  - service: input_datetime.set_datetime
+    data:
+      entity_id: input_datetime.wakeup_time
+      time: '{{ trigger.event.data.wakeup_time }}'
+  - service: input_boolean.turn_on
+    data:
+      entity_id: input_boolean.wakeup_enabled
+  - condition: time
+    weekday:
+    - fri
+    - sat
+  - service: input_boolean.turn_on
+    data:
+      entity_id: input_boolean.wakeup_weekend
+- id: alarm_notification
+  alias: Notify me when intrusion detected.
+  trigger:
+    platform: state
+    entity_id: binary_sensor.thermostat_occupancy
+    to: 'on'
+  condition:
+    - condition: state
+      entity_id: person.me
+      state:  'away'
+  action:
+  - service: notify.mobile_app_cphone
+    data:
+      title: 'Motion Detected'
+      message: 'Motion Detected at Home.'
+      data:
+        push:
+          sound:
+            name: default
+            critical: 1
+            volume: 1.0
+- id: front_door_motion_started
+  alias: "Motioneye - Front Door - Motion started"
+  trigger:
+    platform: webhook
+    webhook_id: motioneye-front-door-started
+  action:
+    service: input_boolean.turn_on
+    data:
+      entity_id: input_boolean.front_door_motion
+- id: front_door_motion_ended
+  alias: "Motioneye - Front Door - Motion ended"
+  trigger:
+    platform: webhook
+    webhook_id: motioneye-front-door-ended
+  action:
+    service: input_boolean.turn_off
+    data:
+      entity_id: input_boolean.front_door_motion
