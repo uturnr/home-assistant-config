@@ -14,9 +14,9 @@ class TimeManager(hass.Hass):
       self.handle_minute_changed,
       time
     )
-    self.handle_minute_changed()
+    self.handle_minute_changed(time)
 
-  def handle_minute_changed(self, kwargs):
+  def handle_minute_changed(self, time):
     now = self.datetime().now()
     current_time_str = now.strftime("%H:%M:00")
 
