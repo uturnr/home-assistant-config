@@ -16,6 +16,11 @@ time_manager:
   class: TimeManager
   dependencies: wakeup_service
 
+tv_lighting:
+  module: tv_lighting
+  class: TvLighting
+  dependencies: wakeup_service
+
 wakeup_service:
   module: wakeup_service
   class: WakeupService
