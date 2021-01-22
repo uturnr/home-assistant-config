@@ -4,3 +4,23 @@
     - light.fan_bulb_1
     - light.fan_bulb_2
     - light.fan_bulb_3
+
+- platform: group
+  name: Living Room East Lights
+  entities:
+    - light.couch_light
+    - light.wall_bulb_west
+    - light.wall_bulb_east
+
+- platform: group
+  name: Wall Lights
+  entities:
+    - light.wall_bulb_west
+    - light.wall_bulb_east
+    
+
+- platform: group
+  name: Living Room Lights
+  entities:
+    - light.fan_light
+    - light.living_room_east_lights
