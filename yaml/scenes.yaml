@@ -37,3 +37,27 @@
       supported_features: 33
       state: 'off'
   icon: mdi:lightbulb-off
+- id: living_room_bright
+  name: Living Room Bright
+  entities:
+    light.living_room_lights:
+      state: 'on'
+      brightness: 255
+- id: living_room_medium
+  name: Living Room Medium
+  entities:
+    light.living_room_lights:
+      state: 'on'
+      brightness: 150
+- id: living_room_ultra_dim
+  name: Living Room Ultra-Dim
+  entities:
+    light.living_room_lights:
+      state: 'on'
+      brightness: 1
+- id: living_room_neutral_color
+  name: Living Room Neutral Color
+  entities:
+    light.living_room_lights:
+      state: 'on'
+      color_temp: 250

@@ -65,7 +65,7 @@ class WakeupService(hass.Hass):
     else:
       is_weekday = False
 
-    # Check if should run wakeup actions
+    # Check if should run wakeup actions.
     if (
       me_state == 'home' and
       wakeup_enabled == 'on' and (
@@ -75,9 +75,18 @@ class WakeupService(hass.Hass):
     ):
       if (current_time_str == wakeup_start_time_str):
         self.start_wakeup(wakeup_duration)
-      if (current_time_str == wakeup_time_str):
+      if (
+        current_time_str == wakeup_time_str and
+        self.get_state('input_boolean.wakeup_music') == 'on'
+        
+      ):
         self.start_music()
-      if (current_time_str == shower_heater_start_time_str):
+      if (
+        current_time_str == shower_heater_start_time_str and
+        self.get_state('input_boolean.wakeup_shower_heater') == 'on'
+      ):
         self.start_shower_heater()
-      if (current_time_str == shower_heater_end_time_str):
-        self.stop_shower_heater()
+    
+    # Turn off shower heater regardless of options.
+    if (current_time_str == shower_heater_end_time_str):
+      self.stop_shower_heater()

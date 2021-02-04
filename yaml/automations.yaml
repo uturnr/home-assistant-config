@@ -33,24 +33,41 @@
     event_type: ozw.scene_activated
   action:
   - scene: scene.bedroom_dim
-- id: play_music_when_home
-  alias: Play music when I get home
+- id: when_home
+  alias: Play music and turn on lights when I get home
   trigger:
   - platform: zone
     entity_id: person.me
     zone: zone.home
     event: enter
-  condition:
-  - condition: or
-    conditions:
-    - condition: time
-      after: 00:00:00
-      before: 08:00:00
-    - condition: time
-      after: '10:00:00'
-      before: '23:59:59'
   action:
-  - service: script.spotify_tv
+    - service: light.turn_on
+      data:
+        entity_id: light.living_room_lights
+    - condition: or
+      conditions:
+      - condition: time
+        after: 00:00:00
+        before: 08:00:00
+      - condition: time
+        after: '10:00:00'
+        before: '23:59:59'
+    - service: script.spotify_tv
+  mode: single
+- id: lights_off_when_not_home
+  alias: Turn some lights off when I'm not home
+  trigger:
+  - platform: zone
+    entity_id: person.me
+    zone: zone.home
+    event: leave
+  action:
+  - service: light.turn_off
+    data:
+      entity_id: light.living_room_east_lights
+  - service: light.turn_off
+    data:
+      entity_id: light.bedroom_light
   mode: single
 - id: event_update_wakeup_time
   alias: Update wakeup time when event triggered (for updating via Google Assistant).

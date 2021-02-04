@@ -1,8 +1,21 @@
 alarm_clock:
-  name: "Wake-up"
+  name: "Wake up"
   entities:
     - input_datetime.wakeup_time
+    - input_number.wakeup_duration
     - input_boolean.wakeup_enabled
     - input_boolean.wakeup_weekend
     - input_boolean.wakeup_music
     - input_boolean.wakeup_shower_heater
+
+turndown:
+  name: "Turndown"
+  entities:
+    - input_boolean.turndown_enabled
+    - input_datetime.bedtime
+    - input_number.turndown_lights_duration
+    - input_number.turndown_advice_time
+    - input_boolean.turndown_weekend
+    - input_boolean.turndown_advice
+    - input_boolean.turndown_tv
+    - input_boolean.turndown_lights

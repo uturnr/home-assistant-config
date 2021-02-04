@@ -6,8 +6,22 @@ bedroom_notification:
   step: 1
 
 wakeup_duration:
-  name: Wake up duration
+  name: Lights Duration
   mode: box
   min: 0
   max: 60
+  step: 1
+
+turndown_lights_duration:
+  name: Lights Duration
+  mode: box
+  min: 0
+  max: 60
+  step: 1
+
+turndown_advice_timedelta:
+  name: Advice Time
+  mode: box
+  min: 0
+  max: 120
   step: 1

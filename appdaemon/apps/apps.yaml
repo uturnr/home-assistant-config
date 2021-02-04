@@ -14,13 +14,19 @@ secrets:
 time_manager:
   module: time_manager
   class: TimeManager
-  dependencies: wakeup_service
+  dependencies:
+    - wakeup_service
+    - turndown_service
+
+turndown_service:
+  module: turndown_service
+  class: TurndownService
 
 tv_lighting:
-  module: tv_lighting
-  class: TvLighting
-  dependencies: wakeup_service
+ module: tv_lighting
+ class: TvLighting
 
 wakeup_service:
   module: wakeup_service
   class: WakeupService
+

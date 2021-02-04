@@ -1,15 +1,35 @@
+# Wakeup
 wakeup_enabled:
-  name: "Wake-up lights"
+  name: "Wake up Enabled"
   icon: mdi:theme-light-dark
 wakeup_weekend:
-  name: "Enable Wake-up on weekends"
+  name: "Enable wake up on weekends"
   icon: mdi:calendar-blank
 wakeup_music:
-  name: "Enable music with wakeup"
+  name: "Enable music with wake up"
   icon: mdi:music
 wakeup_shower_heater:
   name: "Enable Shower Heater"
   icon: mdi:shower-head
+
+# Turndown
+turndown_enabled:
+  name: "Turndown Service"
+  icon: mdi:weather-night
+turndown_weekend:
+  name: "Enable Turndown on weekends"
+  icon: mdi:calendar-blank
+turndown_advice:
+  name: "Enable advice with turndown"
+  icon: mdi:account-heart
+turndown_tv:
+  name: "Enable Turning off TV"
+  icon: mdi:television-off
+turndown_lights:
+  name: "Enable Dimming Lights"
+  icon: mdi:lightbulb-off
+
+# Camera motion
 front_door_motion:
   name: "Front Door Camera Motion"
   icon: mdi:eye

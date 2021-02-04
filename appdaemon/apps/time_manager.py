@@ -23,3 +23,6 @@ class TimeManager(hass.Hass):
     self.WakeupService = self.get_app("wakeup_service")
     self.WakeupService.handle_minute_changed(current_time_str)
 
+    self.TurndownService = self.get_app("turndown_service")
+    self.TurndownService.handle_minute_changed(current_time_str)
+
