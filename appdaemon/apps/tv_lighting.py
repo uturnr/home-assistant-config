@@ -14,28 +14,37 @@ class TvLighting(hass.Hass):
 
   def initialize(self):
     self.listen_state(
-      self.handle_tv_started_playing,
+      self.handle_tv_change,
       'media_player.living_room_tv',
-      new = 'playing'
-    )
-
-    self.listen_state(
-      self.handle_tv_stopped_playing,
-      'media_player.living_room_tv',
-      old = 'playing',
-      duration = 60
+      attribute = 'all'
     )
   
-  def check_source_should_affect_lighting(self):
-    current_source = self.get_state(
-      'media_player.living_room_tv',
-      attribute = 'source'
-    )
-    return current_source in self.SOURCES_FOR_LIGHTING_CHANGES
+  def check_source_should_affect_lighting(self, source):
+    return source in self.SOURCES_FOR_LIGHTING_CHANGES
+  
+  def handle_tv_change(self, entity, attribute, old, new, kwargs):
+    old_state = old['state']
+    new_state = new['state']
+    old_source = old['attributes']['source']
+    new_source = new['attributes']['source']
 
-  def handle_tv_started_playing(self, entity, attribute, old, new, kwargs):
+    # Turn the light off when playing.
+    if (new_state == 'playing'):
+      self.handle_tv_started_playing(new_source)
+    # Turn the light on when done watching.
+    elif (
+      new_state != 'paused' and
+      (
+        old_state == 'playing' or
+        old_state == 'paused'
+      )
+    ):
+      self.handle_tv_stopped_playing(old_source)
+      
+
+  def handle_tv_started_playing(self, new_source):
     if (
-      self.check_source_should_affect_lighting() and
+      self.check_source_should_affect_lighting(new_source) and
       self.get_state('light.couch_light') == 'on'
     ):
       self.call_service(
@@ -43,9 +52,9 @@ class TvLighting(hass.Hass):
         entity_id = 'light.couch_light'
       )
 
-  def handle_tv_stopped_playing(self, entity, attribute, old, new, kwargs):
+  def handle_tv_stopped_playing(self, old_source):
     if (
-      self.check_source_should_affect_lighting() and
+      self.check_source_should_affect_lighting(old_source) and
       self.get_state('light.wall_lights') == 'on' and
       self.get_state('light.couch_light') == 'off'
     ):
