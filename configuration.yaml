@@ -9,6 +9,7 @@ tts:
 automation: !include yaml/automations.yaml
 binary_sensor: !include yaml/binary_sensor.yaml
 camera: !include yaml/camera.yaml
+circadian_lighting: !include yaml/circadian_lighting.yaml
 dialogflow:
 google_assistant: !include yaml/google_assistant.yaml
 group: !include yaml/groups.yaml
@@ -16,11 +17,13 @@ http: !include yaml/http.yaml
 input_boolean: !include yaml/input/boolean.yaml
 input_datetime: !include yaml/input/datetime.yaml
 input_number: !include yaml/input/number.yaml
+input_select: !include yaml/input/select.yaml
 intent_script: !include yaml/intent_script.yaml
 light: !include yaml/light.yaml
 scene: !include yaml/scenes.yaml
 script: !include yaml/scripts.yaml
 sensor: !include yaml/sensors.yaml
+switch: !include yaml/switch.yaml
 spotify: !include yaml/spotify.yaml
 variable: !include yaml/variable.yaml
 

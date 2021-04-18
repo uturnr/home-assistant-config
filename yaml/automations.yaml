@@ -33,6 +33,30 @@
     event_type: ozw.scene_activated
   action:
   - scene: scene.bedroom_dim
+
+- id: set_lzw45_pixel_effect
+  alias: Set LZW45 Pixel Effect on Input Select Change
+  trigger:
+    platform: state
+    entity_id: input_select.laundry_strip_pixel_effect
+  action:
+    service: script.lzw45_pixel_effect
+    data:
+      lzw45: light.laundry_room_light_strip
+
+- id: toggle_living_room
+  alias: Toggle Living Room Lights on Inovelli press
+  trigger:
+  - platform: event
+    event_data:
+      node_id: 9
+      scene_id: 2
+      scene_value_label: Pressed 1 Time
+    event_type: ozw.scene_activated
+  action:
+    service: light.toggle
+    entity_id: light.living_room_lights
+
 - id: when_home
   alias: Play music and turn on lights when I get home
   trigger:

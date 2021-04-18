@@ -24,3 +24,23 @@
   entities:
     - light.fan_light
     - light.living_room_east_lights
+
+- platform: group
+  name: Laundry Room Lights
+  entities:
+    - light.laundry_room_light
+    - light.laundry_room_light_strip
+
+- platform: group
+  name: West Lights
+  entities:
+    - light.laundry_room_lights
+    - light.kitchen_light
+
+- platform: group
+  name: Indoor Lights
+  entities:
+    - light.living_room_lights
+    - light.bedroom_light
+    - light.kitchen_light
+    - light.laundry_room_lights

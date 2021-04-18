@@ -7,6 +7,10 @@ light_switch_notification_manager:
   module: light_switch_notification_manager
   class: LightSwitchNotificationManager
 
+light_switch_press_manager:
+  module: light_switch_press_manager
+  class: LightSwitchPressManager
+
 secrets:
   module: secrets
   class: Secrets

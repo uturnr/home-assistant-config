@@ -1,0 +1,50 @@
+laundry_strip_pixel_effect:
+  name: "Laundry Strip Pixel Effect"
+  options:
+    - static
+    - blink
+    - breath
+    - color-wipe
+    - color-wipe-reverse-inverse
+    - color-wipe-random
+    - random-color
+    - single-dynamic
+    - multi-dynamic
+    - rainbow
+    - rainbow-cycle
+    - scan
+    - dual-scan
+    - fade
+    - running-lights
+    - twinkle
+    - twinkle-random
+    - twinkle-fade
+    - twinkle-fade-random
+    - sparkle
+    - flash-sparkle
+    - hyper-sparkle
+    - strobe
+    - blink-rainbow
+    - chase-white
+    - chase-color
+    - chase-random
+    - chase-rainbow
+    - chase-flash
+    - chase-flash-random
+    - chase-rainbow-white
+    - chase-blackout
+    - chase-blackout-rainbow
+    - color-sweep-random
+    - running-color
+    - running-red-blue
+    - running-random
+    - larson-scanner
+    - comet
+    - fireworks
+    - fireworks-random
+    - merry-christmas
+    - circus-combustus
+    - halloween
+    - aurora
+  initial: static
+  

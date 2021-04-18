@@ -1,0 +1,10 @@
+- platform: circadian_lighting
+  lights_ct:
+    - light.couch_light
+    - light.fan_light
+    - light.wall_bulb_west
+    - light.wall_bulb_east
+    - light.laundry_room_light
+    - light.laundry_room_light_strip
+  lights_brightness:
+    - light.bedroom_light

@@ -52,14 +52,17 @@ class TvLighting(hass.Hass):
         entity_id = 'light.couch_light'
       )
 
+  def maybe_turn_on_couch_light(self, kwargs):
+    if self.get_state('media_player.living_room_tv') != 'playing':
+      self.call_service(
+        'light/turn_on',
+        entity_id = 'light.couch_light'
+      )
+
   def handle_tv_stopped_playing(self, old_source):
     if (
       self.check_source_should_affect_lighting(old_source) and
       self.get_state('light.wall_lights') == 'on' and
       self.get_state('light.couch_light') == 'off'
     ):
-      self.call_service(
-        'light/turn_on',
-        entity_id = 'light.couch_light'
-      )
-
+      self.run_in(self.maybe_turn_on_couch_light, 10)
