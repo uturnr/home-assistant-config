@@ -3,6 +3,10 @@ get_waste_schedule:
   class: GetWasteSchedule
   dependencies: secrets
 
+home_away_service:
+  module: home_away_service
+  class: HomeAwayService
+
 light_switch_notification_manager:
   module: light_switch_notification_manager
   class: LightSwitchNotificationManager

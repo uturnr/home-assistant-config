@@ -6,6 +6,7 @@ default_config:
 tts:
   - platform: google_translate
 
+alexa: !include yaml/alexa.yaml
 automation: !include yaml/automations.yaml
 binary_sensor: !include yaml/binary_sensor.yaml
 camera: !include yaml/camera.yaml
@@ -13,6 +14,7 @@ circadian_lighting: !include yaml/circadian_lighting.yaml
 dialogflow:
 google_assistant: !include yaml/google_assistant.yaml
 group: !include yaml/groups.yaml
+homekit: !include yaml/homekit.yaml
 http: !include yaml/http.yaml
 input_boolean: !include yaml/input/boolean.yaml
 input_datetime: !include yaml/input/datetime.yaml

@@ -16,6 +16,13 @@ class LightSwitchNotificationManager(hass.Hass):
       'entity': 'light.bedroom_light',
       'notify_when_off': False,
       'tracking_number': 'input_number.bedroom_notification',
+      'notifications': []
+    },
+    {
+      'name': 'Kitchen',
+      'entity': 'light.kitchen_light',
+      'notify_when_off': True,
+      'tracking_number': 'input_number.kitchen_notification',
       'notifications': [
         {
           'name': 'Garbage',
@@ -33,11 +40,12 @@ class LightSwitchNotificationManager(hass.Hass):
 
   def initialize(self):
     for switch in self.SWITCHES:
+      notify_when_off = switch['notify_when_off']
       # Track switch toggles for on-only, persisent notifications. (Off when
       # lights off, on when lights on.) Note: The Inovelli Red dimmer seems to
       # persist notifications, the functionality is only needed to ensure
       # that notifications do not show when the switch is off.
-      if switch['notify_when_off'] == False:
+      if notify_when_off == False:
         self.listen_state(
           self.handle_switch_toggled,
           switch['entity'],
@@ -45,13 +53,17 @@ class LightSwitchNotificationManager(hass.Hass):
         )
         self.log(f"Listening for changes to the {switch['name']} switch.")
       # Listen for notifications being cleared (4 taps down)
+      entity_state = self.get_state(switch['entity'], attribute='all')
+      node_id = entity_state['attributes']['node_id']
+
       self.listen_event(
         self.handle_notification_cleared,
         'ozw.scene_activated',
+        node_id = node_id,
         scene_id = 1,
         scene_value_label = 'Pressed 4 Times',
         switch_entity = switch['entity'],
-        tracking_number = switch['tracking_number']
+        tracking_number = switch['tracking_number'],
       )
       self.log(f"Listening for {switch['name']} switch 4x down.")
       for notification in switch['notifications']:
@@ -62,7 +74,8 @@ class LightSwitchNotificationManager(hass.Hass):
           switch_entity = switch['entity'],
           tracking_number = switch['tracking_number'],
           name = notification['name'],
-          color = notification['color']
+          color = notification['color'],
+          notify_when_off = notify_when_off,
         )
         self.log(f"Listening for changes to the {notification['name']} notification.")
 
@@ -90,21 +103,22 @@ class LightSwitchNotificationManager(hass.Hass):
     tracking_number = kwargs['tracking_number']
     name = kwargs['name']
     color = kwargs['color']
+    notify_when_off = kwargs['notify_when_off']
 
     entity_state = self.get_state(switch_entity, attribute='all')
     node_id = entity_state['attributes']['node_id']
     switch_name = entity_state['attributes']['friendly_name']
     switch_state = entity_state['state']
 
-    # If switch is on when variable toggle, activate the notification.
-    if switch_state == 'on':
-      self.set_led_color_now(node_id, color)
-      self.log(f"{switch_name} color immediately triggered, as switch was on.")
-
     if new == 'True':
       new_color = color
     else:
       new_color = 0
+
+    # If switch is on when variable toggle, activate the notification.
+    if switch_state == 'on' or notify_when_off:
+      self.set_led_color_now(node_id, new_color)
+      self.log(f"{switch_name} color {new_color} immediately triggered.")
 
     self.set_color_tracking(tracking_number, new_color)
     self.log(f"{name} to {new}. Color variable set to {new_color}.")

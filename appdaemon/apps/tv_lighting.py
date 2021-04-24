@@ -25,8 +25,8 @@ class TvLighting(hass.Hass):
   def handle_tv_change(self, entity, attribute, old, new, kwargs):
     old_state = old['state']
     new_state = new['state']
-    old_source = old['attributes']['source']
-    new_source = new['attributes']['source']
+    old_source = old['attributes'].get('source')
+    new_source = new['attributes'].get('source')
 
     # Turn the light off when playing.
     if (new_state == 'playing'):
@@ -65,4 +65,4 @@ class TvLighting(hass.Hass):
       self.get_state('light.wall_lights') == 'on' and
       self.get_state('light.couch_light') == 'off'
     ):
-      self.run_in(self.maybe_turn_on_couch_light, 10)
+      self.run_in(self.maybe_turn_on_couch_light, 15)

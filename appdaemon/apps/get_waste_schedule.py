@@ -24,15 +24,21 @@ class GetWasteSchedule(hass.Hass):
     # }
     self.Secrets = self.get_app("secrets")
     for type in self.Secrets.WASTE_TYPES:
+      earliest_day = None
+      name = type['name']
+  
       for url in type['url']:
         r = requests.get(url)
         data = r.json()
-        name = type['name']
 
         for event in data['events']:
           if event['flags'][0]['name'] == name:
-            self.update_notifications(name, event['day'])
+            if earliest_day is None or event['day'] < earliest_day:
+              earliest_day = event['day']
             break
+      
+      if earliest_day is not None:
+        self.update_notifications(name, earliest_day)
 
   def update_notifications(self, name, nextDate):
     notification_name = f'{name}_day_notification'

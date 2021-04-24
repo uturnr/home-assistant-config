@@ -6,5 +6,3 @@
     - light.wall_bulb_east
     - light.laundry_room_light
     - light.laundry_room_light_strip
-  lights_brightness:
-    - light.bedroom_light
