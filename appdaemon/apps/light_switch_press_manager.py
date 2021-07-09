@@ -17,10 +17,6 @@ class LightSwitchPressManager(hass.Hass):
 
   def initialize(self):
     for switch in self.SWITCHES:
-      # Track switch toggles for on-only, persisent notifications. (Off when
-      # lights off, on when lights on.) Note: The Inovelli Red dimmer seems to
-      # persist notifications, the functionality is only needed to ensure
-      # that notifications do not show when the switch is off.
       switch_state = self.get_state(switch['entity'], attribute = 'all')
       node_id = switch_state['attributes']['node_id']
 
@@ -33,11 +29,9 @@ class LightSwitchPressManager(hass.Hass):
         switch_entity = switch['entity'],
       )
 
-  def handle_switch_press(self, event_name, data, kwargs):
-    # Persist notifications by toggling the notifications on when the light
-    # is turned on, and off when the light is turned off.
+      self.log(f'🐣 Listening for presses on {switch["name"]} (Node ID {node_id}).', ascii_encode=False)
 
-    # switch_entity = kwargs['switch_entity']
+  def handle_switch_press(self, event_name, data, kwargs):
     name = kwargs['switch_name']
 
     pressed = None
@@ -53,6 +47,11 @@ class LightSwitchPressManager(hass.Hass):
       up = True
     elif data['scene_id'] == 1: # Down
       up = False
+
+    if pressed == None or up == None:
+      return
+
+    self.log(f'{name} switch pressed {pressed}x {"up" if up else "down"}.')
 
     if name == 'Kitchen':
       if pressed == 1 and up:

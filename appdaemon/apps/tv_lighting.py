@@ -28,6 +28,9 @@ class TvLighting(hass.Hass):
     old_source = old['attributes'].get('source')
     new_source = new['attributes'].get('source')
 
+    if self.get_state('input_boolean.tv_lighting') != 'on':
+      return
+
     # Turn the light off when playing.
     if (new_state == 'playing'):
       self.handle_tv_started_playing(new_source)

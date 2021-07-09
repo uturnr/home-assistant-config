@@ -14,41 +14,19 @@ class WakeupService(hass.Hass):
   def initialize(self):
     pass
 
-  def start_wakeup(self, wakeup_duration):
-    self.log('run start wakeup')
-    self.call_service(
-      'light/turn_on',
-      entity_id = 'light.bedroom_light',
-      transition = wakeup_duration * 60,
-      brightness = 120
-    )
-
-  def start_music(self):
-    self.log('run music')
-    self.call_service('script/spotify_tv')
-
-  def start_shower_heater(self):
-    self.log('run shower heater')
-    self.call_service(
-      'switch/turn_on',
-      entity_id = 'switch.binary_power_switch_instance_2_switch'
-    )
-
-  def stop_shower_heater(self):
-    self.log('stop shower heater')
-    self.call_service(
-      'switch/turn_off',
-      entity_id = 'switch.binary_power_switch_instance_2_switch'
-    )
-
   def handle_minute_changed(self, current_time_str):
     wakeup_enabled = self.get_state('input_boolean.wakeup_enabled')
-    wakeup_duration = int(float(self.get_state('input_number.wakeup_duration')))
+    lights_pre = int(float(self.get_state('input_number.wakeup_lights_duration_pre')))
+    lights_post = int(float(self.get_state('input_number.wakeup_lights_duration_post')))
+    music_post = int(float(self.get_state('input_number.wakeup_music_duration_post')))
+    lights_duration = lights_pre + lights_post
     me_state = self.get_state('person.me')
     wakeup_time_str = self.get_state('input_datetime.wakeup_time')
     wakeup_time = self.datetime().strptime(wakeup_time_str, '%H:%M:%S')
-    wakeup_start_time = wakeup_time - datetime.timedelta(minutes=wakeup_duration)
-    wakeup_start_time_str = wakeup_start_time.strftime("%H:%M:00")
+    lights_start_time = wakeup_time - datetime.timedelta(minutes=lights_pre)
+    lights_start_time_str = lights_start_time.strftime("%H:%M:00")
+    music_start_time = wakeup_time + datetime.timedelta(minutes=music_post)
+    music_start_time_str = music_start_time.strftime("%H:%M:00")
     shower_heater_start_time = wakeup_time - datetime.timedelta(
       minutes=self.SHOWER_HEAT_PRE_MINUTES
     )
@@ -73,12 +51,16 @@ class WakeupService(hass.Hass):
         wakeup_weekend == 'on'
       )
     ):
-      if (current_time_str == wakeup_start_time_str):
-        self.start_wakeup(wakeup_duration)
+      if (current_time_str == lights_start_time_str):
+        self.start_lights(lights_duration)
       if (
         current_time_str == wakeup_time_str and
+        self.get_state('input_boolean.wakeup_all_lights') == 'on'
+      ):
+        self.turn_on_all_lights()
+      if (
+        current_time_str == music_start_time_str and
         self.get_state('input_boolean.wakeup_music') == 'on'
-        
       ):
         self.start_music()
       if (
@@ -90,3 +72,37 @@ class WakeupService(hass.Hass):
     # Turn off shower heater regardless of options.
     if (current_time_str == shower_heater_end_time_str):
       self.stop_shower_heater()
+
+  def start_lights(self, lights_duration):
+    self.log('💡 Starting to fade in lights for wakeup.', ascii_encode=False)
+    self.call_service(
+      'light/turn_on',
+      entity_id = 'light.bedroom_light',
+      transition = lights_duration * 60,
+      brightness = 120
+    )
+  
+  def turn_on_all_lights(self):
+    self.log('💡 Turning on main house lights for wakeup.', ascii_encode=False)
+    self.call_service(
+      'light/turn_on',
+      entity_id = 'light.main_lights',
+    )
+
+  def start_music(self):
+    self.log('🎵 Starting to play music for wakeup.', ascii_encode=False)
+    self.call_service('script/spotify_tv')
+
+  def start_shower_heater(self):
+    self.log('🔥 Starting shower heater for wakeup.', ascii_encode=False)
+    self.call_service(
+      'switch/turn_on',
+      entity_id = 'switch.binary_power_switch_instance_2_switch'
+    )
+
+  def stop_shower_heater(self):
+    self.log('🧯 Stopping shower heater for wakeup.', ascii_encode=False)
+    self.call_service(
+      'switch/turn_off',
+      entity_id = 'switch.binary_power_switch_instance_2_switch'
+    )

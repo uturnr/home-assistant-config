@@ -38,6 +38,12 @@
     - light.kitchen_light
 
 - platform: group
+  name: Main Lights
+  entities:
+    - light.living_room_lights
+    - light.west_lights
+
+- platform: group
   name: Indoor Lights
   entities:
     - light.living_room_lights

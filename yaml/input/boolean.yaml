@@ -11,6 +11,9 @@ wakeup_music:
 wakeup_shower_heater:
   name: "Enable Shower Heater"
   icon: mdi:shower-head
+wakeup_all_lights:
+  name: "Enable All Lights"
+  icon: mdi:lightbulb-group
 
 # Turndown
 turndown_enabled:
@@ -29,7 +32,7 @@ turndown_lights:
   name: "Enable Dimming Lights"
   icon: mdi:lightbulb-off
 
-# Camera motion
-front_door_motion:
-  name: "Front Door Camera Motion"
-  icon: mdi:eye
+# TV Lighting
+tv_lighting:
+  name: "Enable TV Lighting"
+  icon: mdi:television-classic

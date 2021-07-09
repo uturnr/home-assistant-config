@@ -31,3 +31,7 @@ variable: !include yaml/variable.yaml
 
 logger:
   default: info
+  # logs:
+  #   custom_components.circadian_lighting: debug
+  #   custom_components.circadian_lighting.sensor: debug
+  #   custom_components.circadian_lighting.switch: debug

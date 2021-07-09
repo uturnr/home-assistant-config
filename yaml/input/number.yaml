@@ -12,9 +12,22 @@ kitchen_notification:
   max: 100600575
   step: 1
 
+wakeup_lights_duration_pre:
+  name: Lights Pre
+  mode: box
+  min: 0
+  max: 60
+  step: 1
 
-wakeup_duration:
-  name: Lights Duration
+wakeup_lights_duration_post:
+  name: Lights Post
+  mode: box
+  min: 0
+  max: 60
+  step: 1
+
+wakeup_music_duration_post:
+  name: Music Post
   mode: box
   min: 0
   max: 60

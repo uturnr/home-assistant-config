@@ -10,7 +10,9 @@ import requests
 
 class GetWasteSchedule(hass.Hass):
   def initialize(self):
+    self.run_in(self.reset, 0)
     self.fetch_schedules()
+    self.run_daily(self.reset, '04:25:00')
     self.run_daily(self.daily_fetch_schedules, '04:30:00')
 
   def daily_fetch_schedules(self, kwargs):
@@ -49,10 +51,22 @@ class GetWasteSchedule(hass.Hass):
     tomorrow_is_day = tomorrow_date_obj == date_obj
     if tomorrow_is_day:
       self.log(f'{name.capitalize()} day is tomorrow.')
+      self.call_service(
+        'variable/set_variable',
+        variable=notification_name,
+        value=tomorrow_is_day
+      )
     else:
       self.log(f'Next {name} day is {nextDate}')
-    self.call_service(
-      'variable/set_variable',
-      variable=notification_name,
-      value=tomorrow_is_day
-    )
+
+  def reset(self, kwargs):
+    self.Secrets = self.get_app("secrets")
+    self.log('Resetting waste variables to False.')
+    for type in self.Secrets.WASTE_TYPES:
+      name = type['name']
+      notification_name = f'{name}_day_notification'
+      self.call_service(
+        'variable/set_variable',
+        variable=notification_name,
+        value=False
+      )

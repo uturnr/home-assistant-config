@@ -67,15 +67,16 @@ class LightSwitchNotificationManager(hass.Hass):
       )
       self.log(f"Listening for {switch['name']} switch 4x down.")
       for notification in switch['notifications']:
-        # Listen to variables to set notification colors.
+        # Immediately set, then listen to variables to set notification colors.
         self.listen_state(
           self.handle_notification_variable_toggled,
           notification['entity'],
           switch_entity = switch['entity'],
           tracking_number = switch['tracking_number'],
-          name = notification['name'],
+          notification_name = notification['name'],
           color = notification['color'],
           notify_when_off = notify_when_off,
+          immediate = True,
         )
         self.log(f"Listening for changes to the {notification['name']} notification.")
 
@@ -101,7 +102,7 @@ class LightSwitchNotificationManager(hass.Hass):
     # notification color.
     switch_entity = kwargs['switch_entity']
     tracking_number = kwargs['tracking_number']
-    name = kwargs['name']
+    notification_name = kwargs['notification_name']
     color = kwargs['color']
     notify_when_off = kwargs['notify_when_off']
 
@@ -121,7 +122,7 @@ class LightSwitchNotificationManager(hass.Hass):
       self.log(f"{switch_name} color {new_color} immediately triggered.")
 
     self.set_color_tracking(tracking_number, new_color)
-    self.log(f"{name} to {new}. Color variable set to {new_color}.")
+    self.log(f"{notification_name} to {new}. Color variable set to {new_color}.")
 
   def handle_notification_cleared(self, event_name, data, kwargs):
     switch_entity = kwargs['switch_entity']

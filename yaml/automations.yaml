@@ -99,21 +99,3 @@
             name: default
             critical: 1
             volume: 1.0
-- id: front_door_motion_started
-  alias: 'Motioneye - Front Door - Motion started'
-  trigger:
-    platform: webhook
-    webhook_id: motioneye-front-door-started
-  action:
-    service: input_boolean.turn_on
-    data:
-      entity_id: input_boolean.front_door_motion
-- id: front_door_motion_ended
-  alias: 'Motioneye - Front Door - Motion ended'
-  trigger:
-    platform: webhook
-    webhook_id: motioneye-front-door-ended
-  action:
-    service: input_boolean.turn_off
-    data:
-      entity_id: input_boolean.front_door_motion
