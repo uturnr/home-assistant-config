@@ -91,18 +91,18 @@ class WakeupService(hass.Hass):
 
   def start_music(self):
     self.log('🎵 Starting to play music for wakeup.', ascii_encode=False)
-    self.call_service('script/spotify_tv')
+    self.call_service('script/accuradio_tv')
 
   def start_shower_heater(self):
     self.log('🔥 Starting shower heater for wakeup.', ascii_encode=False)
     self.call_service(
       'switch/turn_on',
-      entity_id = 'switch.binary_power_switch_instance_2_switch'
+      entity_id = 'switch.bathroom_power_left'
     )
 
   def stop_shower_heater(self):
     self.log('🧯 Stopping shower heater for wakeup.', ascii_encode=False)
     self.call_service(
       'switch/turn_off',
-      entity_id = 'switch.binary_power_switch_instance_2_switch'
+      entity_id = 'switch.bathroom_power_left'
     )

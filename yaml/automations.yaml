@@ -1,37 +1,24 @@
-- id: start_homekit
-  alias: 'Start HomeKit'
-  trigger:
-  - event: start
-    platform: homeassistant
-  action:
-  - wait_template: "{{ is_state('binary_sensor.ozw_network_ready', 'on') }}"
-    timeout: 00:10:00
-  - service: homekit.start
-
 - id: bedroom_bright
   alias: Bedroom bright on double-tap up
   trigger:
   - platform: event
+    event_type: zwave_js_value_notification
     event_data:
-      node_id: 5
-      scene_id: 2
-      scene_label: Scene 2
-      scene_value_id: 4
-      scene_value_label: Pressed 2 Times
-    event_type: ozw.scene_activated
+      node_id: 12
+      label: Scene 002
+      value: KeyPressed2x
   action:
   - scene: scene.bedroom_bright
+
 - id: bedroom_dim
   alias: Bedroom dim on double-tap down
   trigger:
   - platform: event
+    event_type: zwave_js_value_notification
     event_data:
-      node_id: 5
-      scene_id: 1
-      scene_label: Scene 1
-      scene_value_id: 4
-      scene_value_label: Pressed 2 Times
-    event_type: ozw.scene_activated
+      node_id: 12
+      label: Scene 001
+      value: KeyPressed2x
   action:
   - scene: scene.bedroom_dim
 
@@ -49,11 +36,11 @@
   alias: Toggle Living Room Lights on Inovelli press
   trigger:
   - platform: event
+    event_type: zwave_js_value_notification
     event_data:
       node_id: 9
-      scene_id: 2
-      scene_value_label: Pressed 1 Time
-    event_type: ozw.scene_activated
+      label: Scene 002
+      value: KeyPressed
   action:
     service: light.toggle
     entity_id: light.living_room_lights

@@ -8,30 +8,33 @@ import appdaemon.plugins.hass.hassapi as hass
 
 class LightSwitchNotificationManager(hass.Hass):
   ZW_PARAM = 16
-  ZW_NOTIF_COLOR = 'ozw/set_config_parameter'
+  ZW_SET_PARAM = 'zwave_js/bulk_set_partial_config_parameters'
   NOTIF_TRACK_COLOR = 'input_number/set_value'
+  NOTIF_OFF = 65792
   SWITCHES = [
     {
       'name': 'Bedroom',
-      'entity': 'light.bedroom_light',
+      'entity_id': 'light.bedroom_light',
+      'node_id': 12,
       'notify_when_off': False,
       'tracking_number': 'input_number.bedroom_notification',
       'notifications': []
     },
     {
       'name': 'Kitchen',
-      'entity': 'light.kitchen_light',
+      'entity_id': 'light.kitchen_light',
+      'node_id': 8,
       'notify_when_off': True,
       'tracking_number': 'input_number.kitchen_notification',
       'notifications': [
         {
           'name': 'Garbage',
-          'entity': 'variable.garbage_day_notification',
+          'entity_id': 'variable.garbage_day_notification',
           'color': 33490016
         },
         {
           'name': 'Recycling',
-          'entity': 'variable.recycling_day_notification',
+          'entity_id': 'variable.recycling_day_notification',
           'color': 33490080
         }
       ]
@@ -48,43 +51,32 @@ class LightSwitchNotificationManager(hass.Hass):
       if notify_when_off == False:
         self.listen_state(
           self.handle_switch_toggled,
-          switch['entity'],
+          switch['entity_id'],
           tracking_number = switch['tracking_number']
         )
-        self.log(f"Listening for changes to the {switch['name']} switch.")
-      # Listen for notifications being cleared (4 taps down)
-      entity_state = self.get_state(switch['entity'], attribute='all')
-      node_id = entity_state['attributes']['node_id']
+        self.log(f"🐣 Listening for changes to the {switch['name']} switch.", ascii_encode=False)
 
-      self.listen_event(
-        self.handle_notification_cleared,
-        'ozw.scene_activated',
-        node_id = node_id,
-        scene_id = 1,
-        scene_value_label = 'Pressed 4 Times',
-        switch_entity = switch['entity'],
-        tracking_number = switch['tracking_number'],
-      )
-      self.log(f"Listening for {switch['name']} switch 4x down.")
+      # Listening for notification clearing takes place in light_switch_press_manager
+      # TODO: remove duplication of code between these apps.
+
       for notification in switch['notifications']:
         # Immediately set, then listen to variables to set notification colors.
         self.listen_state(
           self.handle_notification_variable_toggled,
-          notification['entity'],
-          switch_entity = switch['entity'],
+          notification['entity_id'],
+          switch_entity_id = switch['entity_id'],
           tracking_number = switch['tracking_number'],
           notification_name = notification['name'],
           color = notification['color'],
           notify_when_off = notify_when_off,
           immediate = True,
         )
-        self.log(f"Listening for changes to the {notification['name']} notification.")
+        self.log(f"🐣 Listening for changes to the {notification['name']} notification.", ascii_encode=False)
 
-  def handle_switch_toggled(self, entity, attribute, old, new, kwargs):
+  def handle_switch_toggled(self, entity_id, attribute, old, new, kwargs):
     # Persist notifications by toggling the notifications on when the light
     # is turned on, and off when the light is turned off.
-    entity_state = self.get_state(entity, attribute='all')
-    node_id = entity_state['attributes']['node_id']
+    entity_state = self.get_state(entity_id, attribute='all')
     name = entity_state['attributes']['friendly_name']
     tracking_number = kwargs['tracking_number']
     current_tracked_number = int(float(self.get_state(tracking_number)))
@@ -92,55 +84,41 @@ class LightSwitchNotificationManager(hass.Hass):
     if new == 'on':
       new_color = current_tracked_number
     else:
-      new_color = 0
+      new_color = self.NOTIF_OFF
 
-    self.set_led_color_now(node_id, new_color)
-    self.log(f"{name} {new}. Set to {new_color}.")
+    self.set_led_color_now(entity_id, new_color)
+    self.log(f"🎚 {name} {new}. Set to {new_color}.", ascii_encode=False)
 
   def handle_notification_variable_toggled(self, entity, attribute, old, new, kwargs):
     # When a variable is changed, set the tracking entity to the appropriate
     # notification color.
-    switch_entity = kwargs['switch_entity']
+    switch_entity_id = kwargs['switch_entity_id']
     tracking_number = kwargs['tracking_number']
     notification_name = kwargs['notification_name']
     color = kwargs['color']
     notify_when_off = kwargs['notify_when_off']
 
-    entity_state = self.get_state(switch_entity, attribute='all')
-    node_id = entity_state['attributes']['node_id']
+    entity_state = self.get_state(switch_entity_id, attribute='all')
     switch_name = entity_state['attributes']['friendly_name']
     switch_state = entity_state['state']
 
     if new == 'True':
       new_color = color
     else:
-      new_color = 0
+      new_color = self.NOTIF_OFF
 
     # If switch is on when variable toggle, activate the notification.
     if switch_state == 'on' or notify_when_off:
-      self.set_led_color_now(node_id, new_color)
-      self.log(f"{switch_name} color {new_color} immediately triggered.")
+      self.set_led_color_now(switch_entity_id, new_color)
+      self.log(f"🌈 {switch_name} color {new_color} immediately triggered.", ascii_encode=False)
 
     self.set_color_tracking(tracking_number, new_color)
-    self.log(f"{notification_name} to {new}. Color variable set to {new_color}.")
+    self.log(f"💼 {notification_name} to {new}. Color variable set to {new_color}.", ascii_encode=False)
 
-  def handle_notification_cleared(self, event_name, data, kwargs):
-    switch_entity = kwargs['switch_entity']
-    tracking_number = kwargs['tracking_number']
-    entity_state = self.get_state(switch_entity, attribute='all')
-    node_id = entity_state['attributes']['node_id']
-    switch_name = entity_state['attributes']['friendly_name']
-
-    self.log(f"{switch_name} notification cleared.")
-    self.set_color_tracking(tracking_number, 0)
-    self.log('Stored value to 0.')
-    self.set_led_color_now(node_id, 0)
-    self.log('Switch changed to 0.')
-
-  def set_led_color_now(self, node_id, color):
+  def set_led_color_now(self, entity_id, color):
     self.call_service(
-      self.ZW_NOTIF_COLOR,
-      node_id = node_id,
+      self.ZW_SET_PARAM,
+      entity_id = entity_id,
       parameter = self.ZW_PARAM,
       value = color
     )

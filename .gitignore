@@ -21,7 +21,6 @@ image
 tts
 
 # Files
-pyozw.sqlite
 options.xml
 zwcfg_*
 zwscene.xml

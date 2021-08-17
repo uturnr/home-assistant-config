@@ -15,8 +15,8 @@ class TimeManager(hass.Hass):
       time
     )
     self.handle_minute_changed(time)
-    self.log(f'🐣 Watching time for Wakeup Service.', ascii_encode=False)
-    self.log(f'🐣 Watching time for Turndown Service.', ascii_encode=False)
+    self.log('🐣 Watching time for Wakeup Service.', ascii_encode=False)
+    self.log('🐣 Watching time for Turndown Service.', ascii_encode=False)
 
   def handle_minute_changed(self, time):
     now = self.datetime().now()

@@ -1,7 +1,7 @@
 smart_home:
   locale: en-CA
   filter:
-    exclude_entities: !include exclude_entities.yaml
+    include_domains: !include smart_speakers/include_domains.yaml
+    exclude_entities: !include smart_speakers/exclude_entities.yaml
     exclude_entity_globs:
-      - input_*
       - climate.*

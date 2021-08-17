@@ -8,7 +8,7 @@ import appdaemon.plugins.hass.hassapi as hass
 
 class HomeAwayService(hass.Hass):
   def initialize(self):
-    self.log('Listening for zone changes.')
+    self.log('🐣 Listening for zone changes.', ascii_encode=False)
     self.listen_state(self.zone_changed, 'person.me')
 
   def zone_changed(self, entity, attribute, old, new, kwargs):
@@ -23,7 +23,7 @@ class HomeAwayService(hass.Hass):
     self.call_service('light/turn_on', entity_id = 'light.west_lights')
     self.call_service('light/turn_on', entity_id = 'light.living_room_lights')
     if not self.now_is_between('08:00:00', '10:00:00'):
-      self.call_service('script/spotify_tv')
+      self.call_service('script/accuradio_tv')
 
   def handle_away(self):
     self.log('Home - turn off indoor, turn on fan.')

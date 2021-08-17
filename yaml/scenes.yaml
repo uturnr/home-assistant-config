@@ -3,9 +3,6 @@
   entities:
     light.bedroom_light:
       brightness: 255
-      node_id: 5
-      friendly_name: Bedroom Light
-      supported_features: 33
       state: 'on'
   icon: mdi:lightbulb-on
 - id: '1601439405876'
@@ -13,9 +10,6 @@
   entities:
     light.bedroom_light:
       brightness: 90
-      node_id: 5
-      friendly_name: Bedroom Light
-      supported_features: 33
       state: 'on'
   icon: mdi:lightbulb
 - id: '1603765966306'
@@ -23,20 +17,8 @@
   entities:
     light.bedroom_light:
       brightness: 52
-      node_id: 5
-      friendly_name: Bedroom Light
-      supported_features: 33
       state: 'on'
   icon: mdi:moon-waning-crescent
-- id: '1604470803093'
-  name: Bedroom Off
-  entities:
-    light.bedroom_light:
-      node_id: 5
-      friendly_name: Bedroom Light
-      supported_features: 33
-      state: 'off'
-  icon: mdi:lightbulb-off
 - id: living_room_bright
   name: Living Room Bright
   entities:

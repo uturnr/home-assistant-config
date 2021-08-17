@@ -22,6 +22,7 @@ input_number: !include yaml/input/number.yaml
 input_select: !include yaml/input/select.yaml
 intent_script: !include yaml/intent_script.yaml
 light: !include yaml/light.yaml
+panel_custom: !include yaml/panel_custom.yaml
 scene: !include yaml/scenes.yaml
 script: !include yaml/scripts.yaml
 sensor: !include yaml/sensors.yaml

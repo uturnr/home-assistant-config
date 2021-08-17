@@ -1,0 +1,27 @@
+- name: ha_server_con
+  sidebar_title: Server Controls
+  sidebar_icon: mdi:server
+  js_url: /api/hassio/app/entrypoint.js
+  url_path: 'config/server_control'
+  embed_iframe: true
+  require_admin: true
+  config:
+    ingress: core_configurator   
+- name: ha_integ
+  sidebar_title: Integrations
+  sidebar_icon: mdi:puzzle
+  js_url: /api/hassio/app/entrypoint.js
+  url_path: 'config/integrations'
+  embed_iframe: true
+  require_admin: true
+  config:
+    ingress: core_configurator
+- name: ha_integ_zwave
+  sidebar_title: Z-Wave
+  sidebar_icon: mdi:z-wave
+  js_url: /api/hassio/app/entrypoint.js
+  url_path: 'config/zwave_js/dashboard?config_entry=37b358fd933b41e8642dd8bbc0dafe86'
+  embed_iframe: true
+  require_admin: true
+  config:
+    ingress: core_configurator
