@@ -23,9 +23,12 @@ class SleepCurve(hass.Hass):
       'input_boolean.sleep_curve_enabled'
     )
 
-    # Resume by jumping to next hour after reboot 
+    # Resume by restarting current hour after reboot 
     sleep_curve_enabled = self.get_state('input_boolean.sleep_curve_enabled')
     if sleep_curve_enabled:
+      hour_number = int(float(self.get_state('input_number.sleep_curve_hour')))
+      if hour_number != 0:
+        self.utils.set_input('input_number.sleep_curve_hour', hour_number - 1)
       self.run_next_action()
 
   def sleep_curve_changed(self, entity, attribute, old, new, kwargs):
