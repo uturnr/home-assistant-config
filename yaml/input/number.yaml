@@ -1,3 +1,5 @@
+# Light Switch Notifications
+
 bedroom_notification:
   name: Bedroom Notification
   mode: box
@@ -11,6 +13,16 @@ kitchen_notification:
   min: 0
   max: 100600575
   step: 1
+
+# Sleep Curve
+sleep_curve_hour:
+  name: Sleep Curve Hour
+  mode: box
+  min: 0
+  max: 10
+  step: 1
+
+# Wakeup
 
 wakeup_lights_duration_pre:
   name: Lights Pre

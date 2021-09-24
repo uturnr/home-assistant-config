@@ -1,7 +1,21 @@
+global_modules: 
+  - secrets
+  - utils
+
+secrets:
+  module: secrets
+  class: Secrets
+
+utils:
+  module: utils
+  class: Utils
+
+# Dependent modules
+
 get_waste_schedule:
   module: get_waste_schedule
   class: GetWasteSchedule
-  dependencies: secrets
+  global_dependencies: secrets
 
 home_away_service:
   module: home_away_service
@@ -15,9 +29,10 @@ light_switch_press_manager:
   module: light_switch_press_manager
   class: LightSwitchPressManager
 
-secrets:
-  module: secrets
-  class: Secrets
+sleep_curve:
+  module: sleep_curve
+  class: SleepCurve
+  global_dependencies: utils
 
 time_manager:
   module: time_manager

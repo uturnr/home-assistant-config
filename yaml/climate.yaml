@@ -1,0 +1,6 @@
+- platform: midea_ac
+  host: !secret midea_host
+  id: !secret midea_id
+  token: !secret midea_token
+  k1: !secret midea_k1
+  prompt_tone: false

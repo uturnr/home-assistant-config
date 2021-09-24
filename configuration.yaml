@@ -11,6 +11,7 @@ automation: !include yaml/automations.yaml
 binary_sensor: !include yaml/binary_sensor.yaml
 camera: !include yaml/camera.yaml
 circadian_lighting: !include yaml/circadian_lighting.yaml
+climate: !include yaml/climate.yaml
 dialogflow:
 google_assistant: !include yaml/google_assistant.yaml
 group: !include yaml/groups.yaml
@@ -28,6 +29,7 @@ script: !include yaml/scripts.yaml
 sensor: !include yaml/sensors.yaml
 switch: !include yaml/switch.yaml
 spotify: !include yaml/spotify.yaml
+template: !include yaml/template.yaml
 variable: !include yaml/variable.yaml
 
 logger:

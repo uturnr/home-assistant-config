@@ -2,10 +2,11 @@ import appdaemon.plugins.hass.hassapi as hass
 
 class TvLighting(hass.Hass):
   SOURCES_FOR_LIGHTING_CHANGES = [
+    'AirPlay',
     'Global TV',
     'Google Play Movies & TV',
     'Netflix',
-    'Plex - Stream for Free',
+    'Plex - Free Movies & TV',
     'Prime Video',
     'Roku Media Player',
     'Web Video Caster - Receiver',

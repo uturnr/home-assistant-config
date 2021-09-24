@@ -1,19 +1,7 @@
-# Wakeup
-wakeup_enabled:
-  name: "Wake up Enabled"
-  icon: mdi:theme-light-dark
-wakeup_weekend:
-  name: "Enable wake up on weekends"
-  icon: mdi:calendar-blank
-wakeup_music:
-  name: "Enable music with wake up"
-  icon: mdi:music
-wakeup_shower_heater:
-  name: "Enable Shower Heater"
-  icon: mdi:shower-head
-wakeup_all_lights:
-  name: "Enable All Lights"
-  icon: mdi:lightbulb-group
+# Sleep Curve
+sleep_curve_enabled:
+  name: "Sleep Curve"
+  icon: mdi:chart-bell-curve-cumulative
 
 # Turndown
 turndown_enabled:
@@ -36,3 +24,20 @@ turndown_lights:
 tv_lighting:
   name: "Enable TV Lighting"
   icon: mdi:television-classic
+
+# Wakeup
+wakeup_enabled:
+  name: "Wake up Enabled"
+  icon: mdi:theme-light-dark
+wakeup_weekend:
+  name: "Enable wake up on weekends"
+  icon: mdi:calendar-blank
+wakeup_music:
+  name: "Enable music with wake up"
+  icon: mdi:music
+wakeup_shower_heater:
+  name: "Enable Shower Heater"
+  icon: mdi:shower-head
+wakeup_all_lights:
+  name: "Enable All Lights"
+  icon: mdi:lightbulb-group

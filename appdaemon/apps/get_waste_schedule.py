@@ -1,6 +1,7 @@
 import appdaemon.plugins.hass.hassapi as hass
 import datetime
 import requests
+import secrets
 
 #
 # Get Waste Schedule
@@ -24,8 +25,7 @@ class GetWasteSchedule(hass.Hass):
     #   'name': 'garbage',
     #   'url': <API url for garbage schedule>
     # }
-    self.Secrets = self.get_app("secrets")
-    for type in self.Secrets.WASTE_TYPES:
+    for type in secrets.WASTE_TYPES:
       earliest_day = None
       name = type['name']
   
@@ -60,9 +60,8 @@ class GetWasteSchedule(hass.Hass):
       self.log(f'Next {name} day is {nextDate}')
 
   def reset(self, kwargs):
-    self.Secrets = self.get_app("secrets")
-    self.log('Resetting waste variables to False.')
-    for type in self.Secrets.WASTE_TYPES:
+    self.log('♻️ Resetting waste variables to False.', ascii_encode=False)
+    for type in secrets.WASTE_TYPES:
       name = type['name']
       notification_name = f'{name}_day_notification'
       self.call_service(
