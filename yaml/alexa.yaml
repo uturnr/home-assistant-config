@@ -4,5 +4,3 @@ smart_home:
     include_domains: !include smart_speakers/include_domains.yaml
     include_entities: !include smart_speakers/include_entities.yaml
     exclude_entities: !include smart_speakers/exclude_entities.yaml
-    exclude_entity_globs:
-      - climate.thermostat
