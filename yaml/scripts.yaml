@@ -98,6 +98,12 @@ lzw45_pixel_effect:
       parameter: 31
       value: "{{ bytes }}"
 
+restart:
+  alias: Restart Home Assistant
+  icon: mdi:restart
+  sequence:
+    - service: homeassistant.restart
+
 shuffle_music_on_tv:
   alias: Shuffle Music on TV
   icon: mdi:music-box-multiple
