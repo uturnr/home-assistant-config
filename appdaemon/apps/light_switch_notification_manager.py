@@ -1,4 +1,4 @@
-import appdaemon.plugins.hass.hassapi as hass
+import hass_plus
 
 #
 # Light Switch Notification Manager
@@ -6,11 +6,14 @@ import appdaemon.plugins.hass.hassapi as hass
 # Args:
 #
 
-class LightSwitchNotificationManager(hass.Hass):
+class LightSwitchNotificationManager(hass_plus.HassPlus):
   ZW_PARAM = 16
   ZW_SET_PARAM = 'zwave_js/bulk_set_partial_config_parameters'
-  NOTIF_TRACK_COLOR = 'input_number/set_value'
   NOTIF_OFF = 65792
+  COLORS = {
+    'garbage_green': 33490016,
+    'recycling_blue': 33490080,
+  }
   SWITCHES = [
     {
       'name': 'Bedroom',
@@ -30,12 +33,12 @@ class LightSwitchNotificationManager(hass.Hass):
         {
           'name': 'Garbage',
           'entity_id': 'variable.garbage_day_notification',
-          'color': 33490016
+          'color': 'garbage_green'
         },
         {
           'name': 'Recycling',
           'entity_id': 'variable.recycling_day_notification',
-          'color': 33490080
+          'color': 'recycling_blue'
         }
       ]
     }
@@ -54,7 +57,7 @@ class LightSwitchNotificationManager(hass.Hass):
           switch['entity_id'],
           tracking_number = switch['tracking_number']
         )
-        self.log(f"🐣 Listening for changes to the {switch['name']} switch.", ascii_encode=False)
+        self.log(f"🐣 Listening for changes to the {switch['name']} switch.")
 
       # Listening for notification clearing takes place in light_switch_press_manager
       # TODO: remove duplication of code between these apps.
@@ -71,7 +74,7 @@ class LightSwitchNotificationManager(hass.Hass):
           notify_when_off = notify_when_off,
           immediate = True,
         )
-        self.log(f"🐣 Listening for changes to the {notification['name']} notification.", ascii_encode=False)
+        self.log(f"🐣 Listening for changes to the {notification['name']} notification.")
 
   def handle_switch_toggled(self, entity_id, attribute, old, new, kwargs):
     # Persist notifications by toggling the notifications on when the light
@@ -87,7 +90,7 @@ class LightSwitchNotificationManager(hass.Hass):
       new_color = self.NOTIF_OFF
 
     self.set_led_color_now(entity_id, new_color)
-    self.log(f"🎚 {name} {new}. Set to {new_color}.", ascii_encode=False)
+    self.log(f"🎚 {name} {new}. Set to {new_color}.")
 
   def handle_notification_variable_toggled(self, entity, attribute, old, new, kwargs):
     # When a variable is changed, set the tracking entity to the appropriate
@@ -103,17 +106,19 @@ class LightSwitchNotificationManager(hass.Hass):
     switch_state = entity_state['state']
 
     if new == 'True':
-      new_color = color
+      new_color_name = color
+      new_color = self.COLORS[color]
     else:
+      new_color_name = 'off'
       new_color = self.NOTIF_OFF
 
     # If switch is on when variable toggle, activate the notification.
     if switch_state == 'on' or notify_when_off:
       self.set_led_color_now(switch_entity_id, new_color)
-      self.log(f"🌈 {switch_name} color {new_color} immediately triggered.", ascii_encode=False)
+      self.log(f"🌈 {switch_name} color {new_color_name} ({new_color}) immediately triggered.")
 
-    self.set_color_tracking(tracking_number, new_color)
-    self.log(f"💼 {notification_name} to {new}. Color variable set to {new_color}.", ascii_encode=False)
+    self.set(tracking_number, new_color)
+    self.log(f"💼 {notification_name} to {new}. Color variable set to {new_color_name} ({new_color}).")
 
   def set_led_color_now(self, entity_id, color):
     self.call_service(
@@ -122,11 +127,3 @@ class LightSwitchNotificationManager(hass.Hass):
       parameter = self.ZW_PARAM,
       value = color
     )
-
-  def set_color_tracking(self, tracking_number, color):
-    self.call_service(
-      self.NOTIF_TRACK_COLOR,
-      entity_id = tracking_number,
-      value = color
-    )
-    

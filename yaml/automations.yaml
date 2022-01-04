@@ -1,27 +1,3 @@
-- id: bedroom_bright
-  alias: Bedroom bright on double-tap up
-  trigger:
-  - platform: event
-    event_type: zwave_js_value_notification
-    event_data:
-      node_id: 12
-      label: Scene 002
-      value: KeyPressed2x
-  action:
-  - scene: scene.bedroom_bright
-
-- id: bedroom_dim
-  alias: Bedroom dim on double-tap down
-  trigger:
-  - platform: event
-    event_type: zwave_js_value_notification
-    event_data:
-      node_id: 12
-      label: Scene 001
-      value: KeyPressed2x
-  action:
-  - scene: scene.bedroom_dim
-
 - id: set_lzw45_pixel_effect
   alias: Set LZW45 Pixel Effect on Input Select Change
   trigger:

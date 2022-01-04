@@ -22,7 +22,7 @@ class HomeAwayService(hass.Hass):
     self.log('Home - turn on lights.')
     self.call_service('light/turn_on', entity_id = 'light.west_lights')
     self.call_service('light/turn_on', entity_id = 'light.living_room_lights')
-    if not self.now_is_between('08:00:00', '10:00:00'):
+    if not self.now_is_between('00:00:00', '10:00:00'):
       self.call_service('script/accuradio_tv')
 
   def handle_away(self):
