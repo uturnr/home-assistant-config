@@ -4,3 +4,4 @@
   token: !secret midea_token
   k1: !secret midea_k1
   prompt_tone: false
+  keep_last_known_online_state: true 

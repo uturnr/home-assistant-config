@@ -97,12 +97,12 @@ class WakeupService(hass.Hass):
     self.log('🔥 Starting shower heater for wakeup.', ascii_encode=False)
     self.call_service(
       'switch/turn_on',
-      entity_id = 'switch.bathroom_power_left'
+      entity_id = 'switch.shower_heater'
     )
 
   def stop_shower_heater(self):
     self.log('🧯 Stopping shower heater for wakeup.', ascii_encode=False)
     self.call_service(
       'switch/turn_off',
-      entity_id = 'switch.bathroom_power_left'
+      entity_id = 'switch.shower_heater'
     )

@@ -2,7 +2,7 @@ import hass_plus
 
 #
 # Light Switch Notification Manager
-#
+# 
 # Args:
 #
 

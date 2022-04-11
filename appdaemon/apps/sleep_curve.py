@@ -3,7 +3,7 @@ import hass_plus
 class SleepCurve(hass_plus.HassPlus):
   CURVE = [
     16,
-    18,
+    16,
     18,
     19,
     20,

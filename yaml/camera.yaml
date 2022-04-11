@@ -1,4 +1,0 @@
-- platform: generic
-  name: Front Door Camera
-  still_image_url: img/wyze.jpg
-  stream_source: !secret front_door_stream

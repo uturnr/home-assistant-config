@@ -9,7 +9,6 @@ tts:
 alexa: !include yaml/alexa.yaml
 automation: !include yaml/automations.yaml
 binary_sensor: !include yaml/binary_sensor.yaml
-camera: !include yaml/camera.yaml
 circadian_lighting: !include yaml/circadian_lighting.yaml
 climate: !include yaml/climate.yaml
 dialogflow:
