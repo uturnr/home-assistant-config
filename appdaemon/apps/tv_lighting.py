@@ -9,6 +9,7 @@ class TvLighting(hass.Hass):
     'Plex - Free Movies & TV',
     'Prime Video',
     'Roku Media Player',
+    'The Roku Channel',
     'Web Video Caster - Receiver',
     'YouTube'
   ]
