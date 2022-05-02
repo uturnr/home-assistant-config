@@ -12,6 +12,7 @@ class SleepCurve(hass_plus.HassPlus):
   ]
 
   def initialize(self): 
+    self.handle = None
     self.listen_state(
       self.sleep_curve_changed, 
       'input_boolean.sleep_curve_enabled'
@@ -51,6 +52,7 @@ class SleepCurve(hass_plus.HassPlus):
     self.run_next_action()
 
   def sleep_curve_off(self):
+    self.cancel_timer(self.handle)
     self.log('🌙 Sleep Curve ended. A/C off.')
     self.call_service('climate/turn_off', entity_id='climate.bedroom_ac')
     self.set('input_number.sleep_curve_hour', 0)
@@ -77,7 +79,7 @@ class SleepCurve(hass_plus.HassPlus):
 
       # Increment the hour and set a timer for the next action to run.
       self.set('input_number.sleep_curve_hour', hour_number + 1)
-      self.run_in(
+      self.handle = self.run_in(
         self.run_next_action,
         3600,
       )
