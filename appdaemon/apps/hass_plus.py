@@ -11,10 +11,21 @@ class HassPlus(hass.Hass):
     self.log('🐣 Initializing Hass Plus!')
 
   """
-  Log with emojies
+  Log with emojis
   """
   def log(self, message: str):
     hass.Hass.log(self, message, ascii_encode=False)
+
+  """
+  Notify and log
+  """
+  def notify(self, title: str, message: str):
+    self.log(f'💌 Notification sent: {title}: {message}')
+    self.call_service(
+      'notify/mobile_app_cphone',
+      title = title,
+      message = message,
+    )
 
   """
   Update value of:
@@ -62,7 +73,7 @@ class HassPlus(hass.Hass):
     self.log(f'⚙️ {entity_id} to {value}')
 
   """
-  On/off light or scene helper
+  On/off light, switch, scene helper
   """
   def turn(self, on: bool, entity_id: str):
     value = 'on' if on else 'off'
@@ -76,13 +87,13 @@ class HassPlus(hass.Hass):
     self.log(f'⚙️ {entity_id} to {value}')
   
   """
-  Turn on light or scene
+  Turn on light, switch or scene
   """
   def turn_on(self, entity_id: str):
     self.turn(True, entity_id)
   
   """
-  Turn off light
+  Turn off light, switch
   """
   def turn_off(self, entity_id: str):
     self.turn(False, entity_id)

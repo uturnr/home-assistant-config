@@ -1,9 +1,9 @@
 global_modules: 
-  - secrets
+  - my_secrets
   - hass_plus
 
-secrets:
-  module: secrets
+my_secrets:
+  module: my_secrets
   class: Secrets
 
 hass_plus:
@@ -16,7 +16,7 @@ get_waste_schedule:
   module: get_waste_schedule
   class: GetWasteSchedule
   global_dependencies:
-    - secrets
+    - my_secrets
     - hass_plus
 
 home_away_service:

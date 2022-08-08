@@ -41,6 +41,7 @@
   - service: input_boolean.turn_on
     data:
       entity_id: input_boolean.wakeup_weekend
+
 - id: alarm_notification
   alias: Notify me when intrusion detected.
   trigger:

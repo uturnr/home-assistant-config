@@ -32,3 +32,4 @@ secrets.yaml
 known_devices.yaml
 yaml/gcp-service-account.json
 secrets.py
+my_secrets.py

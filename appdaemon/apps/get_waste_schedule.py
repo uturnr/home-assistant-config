@@ -1,7 +1,7 @@
 import hass_plus
 import datetime
 import requests
-import secrets
+import my_secrets
 
 #
 # Get Waste Schedule
@@ -26,7 +26,7 @@ class GetWasteSchedule(hass_plus.HassPlus):
     #   'url': [<API url(s) for garbage schedule>],
     #   'emoji': '🗑',
     # }
-    for type in secrets.WASTE_TYPES:
+    for type in my_secrets.WASTE_TYPES:
       earliest_day = None
       name = type['name']
       emoji = type['emoji']
@@ -59,7 +59,7 @@ class GetWasteSchedule(hass_plus.HassPlus):
 
   def reset(self, kwargs):
     self.log('🚮 Resetting waste variables to False.')
-    for type in secrets.WASTE_TYPES:
+    for type in my_secrets.WASTE_TYPES:
       name = type['name']
       notification_variable = f'variable.{name}_day_notification'
       self.set(notification_variable, False)

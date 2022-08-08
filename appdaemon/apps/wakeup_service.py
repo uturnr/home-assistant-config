@@ -85,6 +85,10 @@ class WakeupService(hass.Hass):
   def turn_on_all_lights(self):
     self.log('💡 Turning on main house lights for wakeup.', ascii_encode=False)
     self.call_service(
+      'switch/turn_on',
+      entity_id = 'switch.circadian_lighting_circadian_lighting'
+    )
+    self.call_service(
       'light/turn_on',
       entity_id = 'light.main_lights',
     )
