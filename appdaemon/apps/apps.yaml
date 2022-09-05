@@ -48,6 +48,7 @@ time_manager:
 turndown_service:
   module: turndown_service
   class: TurndownService
+  global_dependencies: hass_plus
 
 tv_lighting:
  module: tv_lighting

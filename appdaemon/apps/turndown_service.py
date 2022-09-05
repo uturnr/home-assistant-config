@@ -1,4 +1,4 @@
-import appdaemon.plugins.hass.hassapi as hass
+import hass_plus
 import datetime
 
 #
@@ -7,8 +7,8 @@ import datetime
 # Args:
 #
 
-class TurndownService(hass.Hass):
-  LIGHTS = 'light.living_room_lights'
+class TurndownService(hass_plus.HassPlus):
+  LIGHTS = 'light.non_kitchen_main_lights'
 
   def initialize(self):
     pass
@@ -18,19 +18,14 @@ class TurndownService(hass.Hass):
       self.log('Running Turndown Advice')
       # TODO
 
-  def start_dimming(self, dimming_duration):
+  # No transition support with Tuya bulbs. Immediately dim instead.
+  def dim_lights(self):
     if (
       self.get_state('input_boolean.turndown_lights') == 'on' and
-      self.get_state(self.LIGHTS)  == 'on'
+      self.get_state(self.LIGHTS) == 'on'
     ):
-      self.log('Starting to Dim Lights')
-      # TODO
-      # self.call_service(
-      #   'light/turn_on',
-      #   entity_id = self.LIGHTS,
-      #   brightness = 50,
-      #   color_temp = 300
-      # )
+      self.log('🌝 Dimming Lights')
+      self.adjust_lights(self.LIGHTS, None, 370)
 
   def handle_bedtime(self):
     self.log('Running Bedtime Tasks')
@@ -84,6 +79,6 @@ class TurndownService(hass.Hass):
       if (current_time_str == turndown_advice_time_str):
         self.start_advice()
       if (current_time_str == turndown_lights_start_time_str):
-        self.start_dimming(turndown_lights_duration)
+        self.dim_lights(turndown_lights_duration)
       if (current_time_str == bedtime_str):
         self.handle_bedtime()
