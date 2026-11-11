@@ -1,0 +1,363 @@
+- id: '1666010193820'
+  alias: Bedroom AC changes from off ➡️ Turn off Porch Heater
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - climate.bedroom_ac
+    from: 'off'
+  condition: []
+  action:
+  - service: switch.turn_off
+    data: {}
+    target:
+      entity_id: switch.porch_heater
+  mode: single
+- id: set_lzw45_pixel_effect
+  alias: Input Select Change ➡️ Set LZW45 Pixel Effect
+  description: ''
+  triggers:
+  - entity_id: input_select.laundry_strip_pixel_effect
+    trigger: state
+  actions:
+  - data:
+      lzw45: light.laundry_room_light_strip
+      effect: '{{ states(''input_select.laundry_strip_pixel_effect'') }}'
+    action: script.lzw45_pixel_effect
+- id: set_desk_lzw45_pixel_effect
+  alias: Input Select Change ➡️ Set Desk LZW45 Pixel Effect
+  description: ''
+  triggers:
+  - entity_id: input_select.desk_strip_pixel_effect
+    trigger: state
+  actions:
+  - data:
+      lzw45: light.desk_light_strip
+      effect: '{{ states(''input_select.desk_strip_pixel_effect'') }}'
+    action: script.lzw45_pixel_effect
+- id: toggle_living_room
+  alias: Press living room switch ➡️ Toggle Living Room Lights
+  description: ''
+  triggers:
+  - event_type: zwave_js_value_notification
+    event_data:
+      node_id: 9
+      label: Up Paddle
+      value: KeyPressed
+    trigger: event
+  actions:
+  - entity_id: light.living_room_lights
+    action: light.toggle
+- id: alarm_notification
+  alias: Notify me when intrusion detected.
+  trigger:
+    platform: state
+    entity_id: binary_sensor.thermostat_occupancy
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: person.me
+    state: away
+  action:
+  - service: notify.mobile_app_cphone
+    data:
+      title: Motion Detected
+      message: Motion Detected at Home.
+      data:
+        push:
+          sound:
+            name: default
+            critical: 1
+            volume: 1.0
+- id: '1690039664567'
+  alias: Water leak detected
+  description: ''
+  trigger:
+  - type: moist
+    platform: device
+    device_id: 8b9182b8e4ca65a5d3bcc8d279755042
+    entity_id: f469299f016e66d6c62e2af64e53a979
+    domain: binary_sensor
+  condition: []
+  action:
+  - service: script.send_critical_notification
+    data:
+      message: Water leak detected
+  mode: single
+- id: '1690041011233'
+  alias: Water sensor climate or battery issue
+  description: ''
+  trigger:
+  - type: temperature
+    platform: device
+    device_id: 8b9182b8e4ca65a5d3bcc8d279755042
+    entity_id: f8a3498aaf5c9d84ba2db11e12f4c49d
+    domain: sensor
+    above: 29
+  - type: humidity
+    platform: device
+    device_id: 8b9182b8e4ca65a5d3bcc8d279755042
+    entity_id: f70120998ed72d83cc37c10e42ddfd37
+    domain: sensor
+    above: 70
+  - type: bat_low
+    platform: device
+    device_id: 8b9182b8e4ca65a5d3bcc8d279755042
+    entity_id: 4da69072775b18302b2354998b404313
+    domain: binary_sensor
+  - type: bat_low
+    platform: device
+    device_id: 8b9182b8e4ca65a5d3bcc8d279755042
+    entity_id: 8f074e8abfdabfc65cb2c3c30984a9f9
+    domain: binary_sensor
+  condition: []
+  action:
+  - service: notify.mobile_app_cphone
+    data:
+      message: Check water sensor status
+  mode: single
+- id: '1700483246895'
+  alias: Shower Heater Time Limit
+  description: ''
+  trigger:
+  - platform: device
+    type: turned_on
+    device_id: 0151f06082e738f3403a58accb993be0
+    entity_id: db668768eb7614d2185ad54eba401b12
+    domain: switch
+  condition: []
+  action:
+  - delay:
+      hours: 1
+      minutes: 0
+      seconds: 0
+      milliseconds: 0
+  - service: switch.turn_off
+    data: {}
+    target:
+      entity_id: switch.shower_heater
+  mode: single
+- id: '1764090732452'
+  alias: SmartSensor changing quickly -> Notify
+  description: ''
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - sensor.garage_derivative
+    above: 5
+  - trigger: numeric_state
+    entity_id:
+    - sensor.garage_sensor_temperature
+    below: -10
+  - trigger: numeric_state
+    entity_id:
+    - sensor.garage_sensor_temperature
+    above: 10
+  conditions: []
+  actions:
+  - action: notify.mobile_app_cphone
+    metadata: {}
+    data:
+      message: Garage temperature {{ states('sensor.garage_sensor_temperature') |
+        round }}°C, trend {{ states('sensor.garage_derivative') }}ºC/h
+  mode: single
+- id: '1774660089923'
+  alias: Sunset ➡️ Turn on deck, yard lights
+  description: ''
+  triggers:
+  - trigger: sun
+    event: sunset
+    offset: 0
+  conditions: []
+  actions:
+  - action: light.turn_on
+    metadata: {}
+    target:
+      entity_id: light.deck_light
+    data: {}
+  - action: light.turn_on
+    metadata: {}
+    target:
+      entity_id: light.yard_lights
+    data: {}
+  mode: single
+- id: '1774660134545'
+  alias: Sunrise ➡️ Turn off deck, yard lights
+  description: ''
+  triggers:
+  - trigger: sun
+    event: sunrise
+    offset: 0
+  conditions: []
+  actions:
+  - action: light.turn_off
+    metadata: {}
+    target:
+      entity_id: light.deck_light
+    data: {}
+  - action: light.turn_off
+    metadata: {}
+    target:
+      entity_id: light.yard_lights
+    data: {}
+  mode: single
+- id: '1778320165856'
+  alias: Low hot tub set temp alert
+  description: ''
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - climate.hot_tub_spa_thermostat
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 5
+    attribute: temperature
+    above: 30
+    below: 36
+  conditions: []
+  actions:
+  - device_id: 76c4324afdf111ea9bc55d788450cb78
+    domain: mobile_app
+    type: notify
+    message: Check hot tub temperature
+  mode: single
+- id: '1778403509736'
+  alias: Notify of hot tub errors
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.hot_tub_spa_errors
+    to:
+    - 'on'
+  conditions: []
+  actions:
+  - action: notify.send_message
+    metadata: {}
+    target:
+      device_id: 76c4324afdf111ea9bc55d788450cb78
+    data:
+      message: Hot tub error
+  mode: single
+- id: '1778507846823'
+  alias: When step vibrates ➡️ Flash couch light
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.step_vibration_vibration
+    to:
+    - 'on'
+  conditions: []
+  actions:
+  - target:
+      entity_id: light.couch_light
+    action: light.toggle
+  - if:
+    - condition: state
+      entity_id: input_boolean.notify_of_step
+      state:
+      - 'on'
+    then:
+    - action: script.send_critical_notification
+      metadata: {}
+      data:
+        message: Step vibrated.
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 1
+      milliseconds: 0
+  - target:
+      entity_id: light.couch_light
+    action: light.toggle
+  mode: single
+- id: '1789227815277'
+  alias: Leave home ➡️ Start vacuum
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - person.me
+    from:
+    - home
+    to:
+    - not_home
+    for:
+      hours: 0
+      minutes: 30
+      seconds: 0
+  conditions:
+  - condition: template
+    value_template: '{{ (now() - (this.attributes.last_triggered | default(as_datetime(0),
+      true))).total_seconds() > 86400 }}'
+  - condition: state
+    entity_id: binary_sensor.anyone_home
+    state: 'off'
+  actions:
+  - action: vacuum.start
+    metadata: {}
+    data: {}
+    target:
+      entity_id: vacuum.laundry_room_messi_matter
+  mode: single
+- id: '1791341999203'
+  alias: Main Lights off ➡️ Yard Lights off
+  description: ''
+  triggers:
+  - trigger: light.turned_off
+    target:
+      entity_id: light.main_lights
+    options:
+      behavior: each
+      for: 00:00:00
+  conditions: []
+  actions:
+  - action: light.turn_off
+    metadata: {}
+    target:
+      entity_id: light.yard_lights
+    data: {}
+  mode: single
+- id: '1792599527866'
+  alias: 11pm nobody home ➡️ Yard Lights off
+  description: ''
+  triggers:
+  - trigger: time
+    at: '23:00:00'
+  conditions:
+  - condition: zone.not_in_zone
+    target:
+      entity_id: person.me
+    options:
+      behavior: any
+      for: 00:00:00
+      zone: zone.home
+  actions:
+  - action: light.turn_off
+    metadata: {}
+    target:
+      entity_id: light.yard_lights
+    data: {}
+  mode: single
+- id: '1794169637727'
+  alias: Main lights on when sun down ➡️ Turn on yard lights
+  description: ''
+  triggers:
+  - trigger: light.turned_on
+    target:
+      entity_id: light.main_lights
+    options:
+      behavior: each
+      for: 00:00:00
+  conditions:
+  - condition: sun.is_set
+    options: {}
+  actions:
+  - action: light.turn_on
+    metadata: {}
+    target:
+      entity_id: light.yard_lights
+    data: {}
+  mode: single

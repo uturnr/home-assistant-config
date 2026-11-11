@@ -1,6 +1,7 @@
-import appdaemon.plugins.hass.hassapi as hass
+import hass_plus
 
-class TvLighting(hass.Hass):
+
+class TvLighting(hass_plus.HassPlus):
   SOURCES_FOR_LIGHTING_CHANGES = [
     'AirPlay',
     'Global TV',
@@ -10,6 +11,7 @@ class TvLighting(hass.Hass):
     'Prime Video',
     'Roku Media Player',
     'The Roku Channel',
+    'TSN',
     'Web Video Caster - Receiver',
     'YouTube'
   ]
@@ -18,12 +20,12 @@ class TvLighting(hass.Hass):
     self.listen_state(
       self.handle_tv_change,
       'media_player.living_room_tv',
-      attribute = 'all'
+      attribute='all'
     )
-  
+
   def check_source_should_affect_lighting(self, source):
     return source in self.SOURCES_FOR_LIGHTING_CHANGES
-  
+
   def handle_tv_change(self, entity, attribute, old, new, kwargs):
     old_state = old['state']
     new_state = new['state']
@@ -45,16 +47,16 @@ class TvLighting(hass.Hass):
       )
     ):
       self.handle_tv_stopped_playing(old_source)
-      
 
   def handle_tv_started_playing(self, new_source):
     if (
       self.check_source_should_affect_lighting(new_source)
       and self.get_state('light.couch_light') == 'on'
     ):
+      self.log('▶️ TV playing, turning off couch light.')
       self.call_service(
         'light/turn_off',
-        entity_id = 'light.couch_light'
+        entity_id='light.couch_light'
       )
 
   def maybe_turn_on_couch_light(self, kwargs):
@@ -62,9 +64,10 @@ class TvLighting(hass.Hass):
       self.get_state('media_player.living_room_tv') != 'playing'
       and self.now_is_between('04:00:00', '18:00:00')
     ):
+      self.log('⏸️ TV not playing, turning on couch light.')
       self.call_service(
         'light/turn_on',
-        entity_id = 'light.couch_light'
+        entity_id='light.couch_light'
       )
 
   def handle_tv_stopped_playing(self, old_source):

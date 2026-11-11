@@ -1,0 +1,35 @@
+# Sidebar Organizer — shared on all devices when "Use config file" is enabled
+# in the plugin (Profile). Served as /local/sidebar-organizer.yaml
+# https://github.com/ngocjohn/sidebar-organizer
+
+new_items:
+  - title: Apps
+    icon: mdi:application
+    tap_action:
+      action: navigate
+      navigation_path: /config/apps/installed
+  - title: Automations
+    icon: mdi:robot
+    tap_action:
+      action: navigate
+      navigation_path: /config/automation
+  - title: Developer tools
+    icon: mdi:hammer
+    tap_action:
+      action: navigate
+      navigation_path: /config/developer-tools
+  - title: Marketplace
+    icon: mdi:store
+    tap_action:
+      action: navigate
+      navigation_path: /marketplace
+  - title: Zigbee
+    icon: mdi:alpha-z-circle
+    tap_action:
+      action: navigate
+      navigation_path: /app/45df7312_zigbee2mqtt
+hidden_items:
+  - calendar
+  - energy
+  - media-browser
+  - map

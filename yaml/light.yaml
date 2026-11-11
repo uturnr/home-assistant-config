@@ -11,18 +11,30 @@
     - light.couch_light
     - light.wall_bulb_west
     - light.wall_bulb_east
+    
+- platform: group
+  name: Living Room West Lights
+  entities:
+    - light.fan_light
+    - light.office_lamp
 
 - platform: group
   name: Wall Lights
   entities:
     - light.wall_bulb_west
     - light.wall_bulb_east
-    
 
 - platform: group
   name: Living Room Lights
   entities:
-    - light.fan_light
+    - light.desk_light_strip
+    - light.living_room_west_lights
+    - light.living_room_east_lights
+
+- platform: group
+  name: Living Room Lights Night
+  entities:
+    - light.living_room_west_lights
     - light.living_room_east_lights
 
 - platform: group
@@ -41,6 +53,12 @@
   name: Non Kitchen Main Lights
   entities:
     - light.living_room_lights
+    - light.laundry_room_lights
+
+- platform: group
+  name: Non Kitchen Main Lights Night
+  entities:
+    - light.living_room_lights_night
     - light.laundry_room_lights
 
 - platform: group

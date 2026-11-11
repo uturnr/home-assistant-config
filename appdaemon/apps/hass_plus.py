@@ -1,6 +1,7 @@
 from array import array
 import appdaemon.plugins.hass.hassapi as hass
 from typing import Union
+from typing import Literal
 
 #
 # Extend hass.Hass with helpers
@@ -35,38 +36,40 @@ class HassPlus(hass.Hass):
    - variable
   """
   def set(self, entity_id: str, value: Union[str, int, bool]):
-    # variable.set_variable -> variable
+    # Get entity type from entity_id
     entity_type = entity_id.split('.')[0]
-    # variable.set_variable -> set_variable
-    entity_name = entity_id.split('.')[1]
 
     def generic_set(service: str):
       self.call_service(
         service,
-        entity_id = entity_id,
-        value = value,
+        entity_id=entity_id,
+        value=value,
       )
 
     def set_input_boolean():
       self.call_service(
         f'input_boolean/turn_{value}',
-        entity_id = entity_id,
+        entity_id=entity_id,
       )
+
     def set_input_number():
       generic_set('input_number/set_value')
-    def set_variable():
+
+    def set_sensor():
+      prefix = 'binary_' if entity_type == 'binary_sensor' else ''
       self.call_service(
-        'variable/set_variable',
-        variable = entity_name,
-        value = value,
+        f'variable/update_{prefix}sensor',
+        target={
+          'entity_id': entity_id,
+        },
+        value=value,
       )
 
-
-
     setters = {
+      'binary_sensor': set_sensor,
       'input_number': set_input_number,
       'input_boolean': set_input_boolean,
-      'variable': set_variable,
+      'sensor': set_sensor,
     }
 
     setters[entity_type]()
@@ -76,28 +79,39 @@ class HassPlus(hass.Hass):
   """
   On/off light, switch, scene helper
   """
-  def turn(self, on: bool, entity_id: str):
-    value = 'on' if on else 'off'
+  def turn(self, action: Literal['turn_off', 'turn_on', 'toggle'], entity_id: str):
     service_type = entity_id.split('.')[0]
+    new_state_message = ''
     if service_type == 'scene':
-      assert on, 'turn_off not supported for scenes'
+      assert action == 'turn_on', f'{action} not supported for scenes'
+    if action == 'toggle':
+      old_state = self.get_state(entity_id)
+      new_state = 'off' if old_state == 'on' else 'on'
+      new_state_message = f' (to {new_state})' if service_type != 'scene' else ''
     self.call_service(
-      f'{service_type}/turn_{value}',
-      entity_id = entity_id,
+      f'{service_type}/{action}',
+      entity_id=entity_id,
     )
-    self.log(f'⚙️ {entity_id} to {value}')
-  
+
+    self.log(f'⚙️ {action} {entity_id} {new_state_message}')
+
   """
   Turn on light, switch or scene
   """
   def turn_on(self, entity_id: str):
-    self.turn(True, entity_id)
-  
+    self.turn('turn_on', entity_id)
+
   """
   Turn off light, switch
   """
   def turn_off(self, entity_id: str):
-    self.turn(False, entity_id)
+    self.turn('turn_off', entity_id)
+
+  """
+  Turn off light, switch
+  """
+  def toggle(self, entity_id: str):
+    self.turn('toggle', entity_id)
 
   """
   Adjust brightness/color for lights that are already on within a light group
@@ -128,7 +142,7 @@ class HassPlus(hass.Hass):
 
         # Mark current light/light group as processed
         light_queue[light] = True
-        
+
         if light_already_processed:
           continue
         else:

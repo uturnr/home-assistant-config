@@ -58,3 +58,17 @@ turndown_advice_timedelta:
   min: 0
   max: 120
   step: 1
+
+wakeup_shower_heat_pre:
+  name: Shower Heat Pre
+  mode: box
+  min: -180
+  max: 180
+  step: 1
+
+wakeup_shower_heat_post:
+  name: Shower Heat Post
+  mode: box
+  min: 0
+  max: 180
+  step: 1

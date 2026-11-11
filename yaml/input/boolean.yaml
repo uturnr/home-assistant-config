@@ -1,3 +1,12 @@
+# Home/Away Service
+arrive_home_enabled:
+  name: "Arrive Home Service"
+  icon: mdi:car
+
+leave_home_enabled:
+  name: "Leave Home Service"
+  icon: mdi:car-back
+
 # Sleep Curve
 sleep_curve_enabled:
   name: "Sleep Curve"

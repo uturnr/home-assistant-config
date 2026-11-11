@@ -1,0 +1,12 @@
+{%- macro with_tuya_source(entity_id) -%}
+{{- entity_id ~ '_' ~ states('input_text.tuya_source') -}}
+{%- endmacro -%}
+
+{%- macro kelvin_to_mireds(kelvin) -%}
+{%- if kelvin is none -%}
+{{- none -}}
+{%- else -%}
+{%- set mireds = ((1000000 / kelvin | float) | round(0)) | int -%}
+{{- [[mireds, 370] | min, 153] | max -}}
+{%- endif -%}
+{%- endmacro -%}

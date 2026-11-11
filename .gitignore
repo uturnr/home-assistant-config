@@ -9,6 +9,10 @@ __pycache__
 .vscode
 .DS_Store
 
+# HA runtime
+.ha_run.lock
+.cache/
+
 # Logs
 *.log
 logs
@@ -17,14 +21,33 @@ logs
 # Folders
 .storage
 .cloud
+custom_components/
 deps
 image
 tts
 
+# AppDaemon generated
+appdaemon/compiled/
+
+# www: HACS/community assets; keep layout config
+www/community/
+www/*
+!www/sidebar-organizer.yaml
+
 # Files
 options.xml
+pyozw.sqlite
 zwcfg_*
 zwscene.xml
+
+# Lutron Caseta TLS material
+lutron_caseta-*.pem
+
+# Zigbee2MQTT (keys, DB, MQTT creds in configuration.yaml)
+zigbee2mqtt/
+
+# ESPHome (managed on the box / add-on, not this repo)
+esphome/
 
 # Secrets
 ip_bans.yaml

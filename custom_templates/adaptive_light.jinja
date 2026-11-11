@@ -1,0 +1,39 @@
+{%- macro brightness_factor(entity_id) -%}
+{%- set factors = {
+  'light.office_lamp_adaptive': 0.65,
+} -%}
+{%- if entity_id in factors -%}
+{{- factors[entity_id] | float -}}
+{%- else -%}
+{{- 1 | float -}}
+{%- endif -%}
+{%- endmacro -%}
+
+{%- macro with_adaptive_source(entity_id) -%}
+{%- if entity_id.endswith('_adaptive') -%}
+{{- entity_id[:-9] -}}
+{%- else -%}
+{{- entity_id -}}
+{%- endif -%}
+{%- endmacro -%}
+
+{%- macro scaled_brightness_for_device(brightness, factor) -%}
+{%- if brightness is none -%}
+{{- none -}}
+{%- else -%}
+{{- (brightness | int * factor | float) | int -}}
+{%- endif -%}
+{%- endmacro -%}
+
+{%- macro scaled_brightness_for_adaptive(brightness, factor) -%}
+{%- if brightness is none -%}
+{{- none -}}
+{%- else -%}
+{%- set f = factor | float -%}
+{%- if f == 0 -%}
+{{- none -}}
+{%- else -%}
+{{- [[((brightness | int / f) | int), 255] | min, 1] | max -}}
+{%- endif -%}
+{%- endif -%}
+{%- endmacro -%}

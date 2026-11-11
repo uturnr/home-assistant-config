@@ -4,13 +4,10 @@ import datetime
 #
 # Wakeup Service
 #
-# Args:
+# Args: 
 #
 
 class WakeupService(hass.Hass):
-  SHOWER_HEAT_PRE_MINUTES = 5
-  SHOWER_HEAT_POST_MINUTES = 15
-
   def initialize(self):
     pass
 
@@ -19,6 +16,9 @@ class WakeupService(hass.Hass):
     lights_pre = int(float(self.get_state('input_number.wakeup_lights_duration_pre')))
     lights_post = int(float(self.get_state('input_number.wakeup_lights_duration_post')))
     music_post = int(float(self.get_state('input_number.wakeup_music_duration_post')))
+    shower_heat_pre = int(float(self.get_state('input_number.wakeup_shower_heat_pre')))
+    shower_heat_post = int(float(self.get_state('input_number.wakeup_shower_heat_post')))
+
     lights_duration = lights_pre + lights_post
     me_state = self.get_state('person.me')
     wakeup_time_str = self.get_state('input_datetime.wakeup_time')
@@ -28,13 +28,15 @@ class WakeupService(hass.Hass):
     music_start_time = wakeup_time + datetime.timedelta(minutes=music_post)
     music_start_time_str = music_start_time.strftime("%H:%M:00")
     shower_heater_start_time = wakeup_time - datetime.timedelta(
-      minutes=self.SHOWER_HEAT_PRE_MINUTES
+      minutes=shower_heat_pre
     )
     shower_heater_start_time_str = shower_heater_start_time.strftime("%H:%M:00")
     shower_heater_end_time = wakeup_time + datetime.timedelta(
-      minutes=self.SHOWER_HEAT_POST_MINUTES
+      minutes=shower_heat_post
     )
     shower_heater_end_time_str = shower_heater_end_time.strftime("%H:%M:00")
+    wakeup_disable_time = wakeup_time + datetime.timedelta(hours=3)
+    wakeup_disable_time_str = wakeup_disable_time.strftime("%H:%M:00")
 
     wakeup_weekend = self.get_state('input_boolean.wakeup_weekend')
     current_day_of_week = str(self.date().isoweekday())
@@ -42,6 +44,14 @@ class WakeupService(hass.Hass):
       is_weekday = True
     else:
       is_weekday = False
+
+    # One-shot: clear after wakeup window (3h past alarm covers all offsets).
+    if (
+      wakeup_enabled == 'on' and
+      current_time_str == wakeup_disable_time_str
+    ):
+      self.log('⏰ Disabling wakeup for tomorrow.', ascii_encode=False)
+      self.turn_off('input_boolean.wakeup_enabled')
 
     # Check if should run wakeup actions.
     if (
@@ -79,14 +89,14 @@ class WakeupService(hass.Hass):
       'light/turn_on',
       entity_id = 'light.bedroom_light',
       transition = lights_duration * 60,
-      brightness = 120
+      brightness_pct = 30
     )
   
   def turn_on_all_lights(self):
     self.log('💡 Turning on main house lights for wakeup.', ascii_encode=False)
     self.call_service(
       'switch/turn_on',
-      entity_id = 'switch.circadian_lighting_circadian_lighting'
+      entity_id = 'switch.adaptive_lighting_default'
     )
     self.call_service(
       'light/turn_on',
@@ -95,7 +105,7 @@ class WakeupService(hass.Hass):
 
   def start_music(self):
     self.log('🎵 Starting to play music for wakeup.', ascii_encode=False)
-    self.call_service('script/accuradio_tv')
+    self.call_service('script/radioparadise_tv')
 
   def start_shower_heater(self):
     self.log('🔥 Starting shower heater for wakeup.', ascii_encode=False)

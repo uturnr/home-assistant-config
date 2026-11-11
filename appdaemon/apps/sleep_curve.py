@@ -1,26 +1,28 @@
 import hass_plus
 
+
 class SleepCurve(hass_plus.HassPlus):
   CURVE = [
     16,
-    16,
-    16,
+    17,
+    17,
     18,
     18,
     20,
     20,
-    22,
-    24
+    20,
+    20,
+    20,
   ]
   HOUR_SECONDS = 3600
-  CALL_INTERVAL_SECONDS = 10
+  CALL_INTERVAL_SECONDS = 4
   POWER_INTERVAL_SECONDS_1 = 60
   POWER_INTERVAL_SECONDS_2 = 300
   MAX_RETRIES = 2
   SANITY_CHECK_MINUTES = 4
 
   def initialize(self):
-    # TODO: fix (invalid callback handle) 
+    # TODO: fix (invalid callback handle)
     self.handle = None
     self.sanity_check_handle = None
     self.retries = 0
@@ -28,7 +30,7 @@ class SleepCurve(hass_plus.HassPlus):
     self.sanity_checks = 0
     self.sanity_check_start_temp = None
     self.listen_state(
-      self.sleep_curve_changed, 
+      self.sleep_curve_changed,
       'input_boolean.sleep_curve_enabled'
     )
 
@@ -56,8 +58,12 @@ class SleepCurve(hass_plus.HassPlus):
     else:
       self.power_retries += 1
       self.turn_off('switch.air_conditioner_power')
-      next_delay = self.POWER_INTERVAL_SECONDS_1 if self.power_retries < 2 else self.POWER_INTERVAL_SECONDS_2
-        
+      next_delay = (
+        self.POWER_INTERVAL_SECONDS_1
+        if self.power_retries < 2
+        else self.POWER_INTERVAL_SECONDS_2
+      )
+
       self.notify(
         'Sleep Curve',
         f'Power cycling air conditioner and retrying in {next_delay} seconds'
@@ -67,7 +73,7 @@ class SleepCurve(hass_plus.HassPlus):
         self.set_ac_power_to_on_and_next,
         next_delay
       )
-    
+
   def set_ac_power_to_on_and_next(self, kwargs={}):
     ac_power_on: bool = self.get_state('switch.air_conditioner_power') == 'on'
 
@@ -79,12 +85,60 @@ class SleepCurve(hass_plus.HassPlus):
       self.log('🎛 AC Power already on.')
       next_delay = 0
 
+    self.log(f'🎛 Setting AC to display off in {next_delay} seconds.')
+
+    self.handle = self.run_in(
+      self.set_ac_to_display_off_and_next,
+      next_delay
+    )
+
+  def set_ac_to_display_off_and_next(self, kwargs={}):
+    ac_state_display_off: bool = (
+      self.get_state('switch.bedroom_ac_screen_display') == 'off'
+    )
+
+    if not ac_state_display_off:
+      self.turn_off('switch.bedroom_ac_screen_display')
+      self.log('🎛 AC set to display off attempted.')
+      next_delay = self.CALL_INTERVAL_SECONDS
+    else:
+      self.log('🎛 AC display already off.')
+      next_delay = 0
+
     self.log(f'🎛 Setting AC to cool in {next_delay} seconds.')
 
     self.handle = self.run_in(
-      self.set_ac_to_cool_and_next,
+      self.ac_to_display_off_check_and_next,
       next_delay
     )
+
+  def ac_to_display_off_check_and_next(self, kwargs={}):
+    ac_state_display_off: bool = (
+      self.get_state('switch.bedroom_ac_screen_display') == 'off'
+    )
+
+    next_delay = self.CALL_INTERVAL_SECONDS
+
+    if not ac_state_display_off and self.retries == self.MAX_RETRIES:
+      self.power_cycle()
+    elif not ac_state_display_off:
+      self.retries += 1
+      self.notify(
+        'Sleep Curve',
+        f'AC failed to set display off. Will retry. ({self.retries})'
+      )
+      self.handle = self.run_in(
+        self.set_ac_to_display_off_and_next,
+        next_delay
+      )
+    else:
+      self.retries = 0
+      self.log('🎛 AC set to display off successful.')
+      self.log(f'🎛 Setting AC to cool in {next_delay} seconds.')
+      self.handle = self.run_in(
+        self.set_ac_to_cool_and_next,
+        next_delay
+      )
 
   def set_ac_to_cool_and_next(self, kwargs={}):
     ac_state_cool: bool = self.get_state('climate.bedroom_ac') == 'cool'
@@ -92,19 +146,19 @@ class SleepCurve(hass_plus.HassPlus):
     if not ac_state_cool:
       self.call_service(
         'climate/set_hvac_mode',
-        entity_id = 'climate.bedroom_ac',
-        hvac_mode = 'cool',
+        entity_id='climate.bedroom_ac',
+        hvac_mode='cool',
       )
       self.log('🎛 AC set to cool mode attempted.')
       next_delay = self.CALL_INTERVAL_SECONDS
     else:
       next_delay = 0
-    
+
     self.handle = self.run_in(
       self.ac_to_cool_check_and_next,
       next_delay
     )
-  
+
   def ac_to_cool_check_and_next(self, kwargs={}):
     ac_state_cool: bool = self.get_state('climate.bedroom_ac') == 'cool'
     next_delay = self.CALL_INTERVAL_SECONDS
@@ -134,13 +188,13 @@ class SleepCurve(hass_plus.HassPlus):
     ac_fan_state_auto: bool = self.get_state(
       'climate.bedroom_ac',
       'fan_mode'
-    ) == 'Auto'
+    ) == 'auto'
 
     if not ac_fan_state_auto:
       self.call_service(
         'climate/set_fan_mode',
-        entity_id = 'climate.bedroom_ac',
-        fan_mode = 'Auto',
+        entity_id='climate.bedroom_ac',
+        fan_mode='auto',
       )
       self.log('🎛 AC set to auto fan mode attempted.')
       next_delay = self.CALL_INTERVAL_SECONDS
@@ -156,7 +210,7 @@ class SleepCurve(hass_plus.HassPlus):
     ac_fan_state_auto: bool = self.get_state(
       'climate.bedroom_ac',
       'fan_mode'
-    ) == 'Auto'
+    ) == 'auto'
     next_delay = self.CALL_INTERVAL_SECONDS
 
     if not ac_fan_state_auto and self.retries == self.MAX_RETRIES:
@@ -189,8 +243,8 @@ class SleepCurve(hass_plus.HassPlus):
     if not ac_preset_eco:
       self.call_service(
         'climate/set_preset_mode',
-        entity_id = 'climate.bedroom_ac',
-        preset_mode = 'eco',
+        entity_id='climate.bedroom_ac',
+        preset_mode='eco',
       )
       self.log('🎛 AC set to eco mode attempted.')
       next_delay = self.CALL_INTERVAL_SECONDS
@@ -201,7 +255,6 @@ class SleepCurve(hass_plus.HassPlus):
       self.ac_preset_to_eco_check_and_next,
       next_delay
     )
-
 
   def ac_preset_to_eco_check_and_next(self, kwargs={}):
     ac_preset_eco: bool = self.get_state(
@@ -245,7 +298,10 @@ class SleepCurve(hass_plus.HassPlus):
     else:
       self.log('🌙 No Sleep Curve main timer to cancel.')
     self.handle = None
-    if self.sanity_check_handle and self.timer_running(self.sanity_check_handle):
+    if (
+      self.sanity_check_handle
+      and self.timer_running(self.sanity_check_handle)
+    ):
       self.cancel_timer(self.sanity_check_handle)
       self.log('🌙 Sleep Curve sanity timer canceled.')
     else:
@@ -269,14 +325,28 @@ class SleepCurve(hass_plus.HassPlus):
     if hour_number < len(self.CURVE):
       # Set the appropriate temperature for the given hour.
       desired_temp = self.CURVE[hour_number]
-      self.call_service(
-        'climate/set_temperature',
-        entity_id='climate.bedroom_ac',
-        temperature=desired_temp,
-      )
-      self.log(
-        f'🌙 Sleep Curve has attempted to set temperature to {desired_temp}.'
-      )
+      entity = 'climate.bedroom_ac'
+      
+      # Get current temp setpoint
+      current_temp = self.get_state(entity, attribute="temperature")
+      
+      try:
+        current_temp = float(current_temp)
+      except (TypeError, ValueError):
+        current_temp = None
+    
+      if current_temp is None or abs(desired_temp - current_temp) >= 0.5:
+        self.call_service(
+          'climate/set_temperature',
+          entity_id=entity,
+          temperature=desired_temp,
+        )
+        self.log(
+          f'🌙 Sleep Curve has attempted to set temperature to {desired_temp}.'
+        )
+      else:
+        self.log(f"😴 Temp already near {desired_temp}°C (current {current_temp}), skipping.")
+      
       self.handle = self.run_in(
         self.update_temp_check_and_next,
         self.CALL_INTERVAL_SECONDS,
@@ -304,7 +374,8 @@ class SleepCurve(hass_plus.HassPlus):
       self.retries += 1
       self.notify(
         'Sleep Curve',
-        f'AC failed to set temp to {desired_temp}. Will retry. ({self.retries})'
+        f'AC failed to set temp to {desired_temp}. Will retry. '
+        + f'({self.retries})'
       )
       self.handle = self.run_in(
         self.update_temp_and_next,
@@ -312,7 +383,9 @@ class SleepCurve(hass_plus.HassPlus):
       )
     else:
       if hour_number == 0:
-        self.log(f'🎛 Successfully set initial sleep curve temp to {desired_temp}')
+        self.log(
+          f'🎛 Successfully set initial sleep curve temp to {desired_temp}'
+        )
         self.sanity_checks = 0
         self.sanity_check_start_temp = self.get_state(
           'climate.bedroom_ac',
@@ -322,7 +395,7 @@ class SleepCurve(hass_plus.HassPlus):
           self.run_sanity_check_and_next,
           60,
         )
-          
+
       # Increment the hour and set a timer for the next action to run.
       self.set('input_number.sleep_curve_hour', hour_number + 1)
       self.handle = self.run_in(
@@ -332,7 +405,8 @@ class SleepCurve(hass_plus.HassPlus):
 
   # midea-ac-py will happily "accept" commands and update local state when
   # the wifi on the unit has completely failed and needs a power cycle. (🙄)
-  # Watch the temperature for a bit to make sure the unit is actually connected.
+  # Watch the temperature for a bit to make sure the unit is actually
+  # connected.
   def run_sanity_check_and_next(self, kwargs={}):
     # TODO: check if the actual temp is close to the desired temp. If so,
     # consider the sanity check satisfied.
@@ -345,13 +419,13 @@ class SleepCurve(hass_plus.HassPlus):
         + f' and is now {current_temp}. Sanity check complete.'
       )
       return
-    
+
     if self.sanity_checks >= self.SANITY_CHECK_MINUTES:
       self.power_cycle()
     else:
       self.sanity_checks = self.sanity_checks + 1
       self.log(
-        f'🎛 AC actual temperature hasn’t changed yet. '
+        '🎛 AC actual temperature hasn’t changed yet. '
         + f'It has been {self.sanity_checks} minute(s).'
       )
       self.sanity_check_handle = self.run_in(

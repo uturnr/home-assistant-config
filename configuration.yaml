@@ -6,32 +6,31 @@ tts:
   - platform: google_translate
 
 alexa: !include yaml/alexa.yaml
-automation: !include yaml/automations.yaml
+automation: !include automations.yaml
 binary_sensor: !include yaml/binary_sensor.yaml
-circadian_lighting: !include yaml/circadian_lighting.yaml
 climate: !include yaml/climate.yaml
 dialogflow:
+frontend:
+  extra_module_url:
+    - /hacsfiles/sidebar-organizer/sidebar-organizer.js?hacstag=932534411412
 google_assistant: !include yaml/google_assistant.yaml
 group: !include yaml/groups.yaml
 homekit: !include yaml/homekit.yaml
-http: !include yaml/http.yaml
 input_boolean: !include yaml/input/boolean.yaml
 input_datetime: !include yaml/input/datetime.yaml
 input_number: !include yaml/input/number.yaml
 input_select: !include yaml/input/select.yaml
 intent_script: !include yaml/intent_script.yaml
 light: !include yaml/light.yaml
+logbook:
+  exclude:
+    entities:
+      - sensor.time
 panel_custom: !include yaml/panel_custom.yaml
-scene: !include yaml/scenes.yaml
-script: !include yaml/scripts.yaml
+scene: !include scenes.yaml
+script: !include scripts.yaml
 sensor: !include yaml/sensors.yaml
-switch: !include yaml/switch.yaml
 template: !include yaml/template.yaml
-variable: !include yaml/variable.yaml
 
 logger:
   default: info
-  # logs:
-  #   custom_components.circadian_lighting: debug
-  #   custom_components.circadian_lighting.sensor: debug
-  #   custom_components.circadian_lighting.switch: debug

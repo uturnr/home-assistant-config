@@ -3,3 +3,231 @@
     unit_of_measurement: "°C"
     state: >
       {{ state_attr('climate.bedroom_ac', 'outdoor_temperature') }}
+
+- light:
+  - name: "Front Door Glass Transparency"
+    default_entity_id: light.front_porch_door_glass_custom_fade
+    state: >
+      {{ states('light.front_porch_door_glass') }}
+    turn_on:
+      action: light.turn_on
+      target:
+        entity_id: light.front_porch_door_glass
+      data:
+        transition: 1
+    turn_off:
+      action: light.turn_off
+      target:
+        entity_id: light.front_porch_door_glass
+      data:
+        transition: .2
+    set_level:
+      action: light.turn_on
+      target:
+        entity_id: light.front_porch_door_glass
+      data:
+        brightness: "{{ brightness }}"
+        transition: "{{ 2 if brightness|int > 0 else 1 }}"
+    level: >
+      {{ state_attr('light.front_porch_door_glass', 'brightness') }}
+
+  - name: "Togglable Tuya Source Light Template"
+    <<: &tuya_light_template_config
+      state: >
+        {% from 'tuya.jinja' import with_tuya_source %}
+        {{ is_state(with_tuya_source(this.entity_id), 'on') }}
+      level: >
+        {% from 'tuya.jinja' import with_tuya_source %}
+        {{ state_attr(with_tuya_source(this.entity_id), 'brightness') }}
+      temperature: >
+        {% from 'tuya.jinja' import kelvin_to_mireds %}
+        {% from 'tuya.jinja' import with_tuya_source %}
+        {{ kelvin_to_mireds(
+          state_attr(with_tuya_source(this.entity_id), 'color_temp_kelvin')
+        ) }}
+      min_mireds: >
+        {% from 'tuya.jinja' import kelvin_to_mireds %}
+        {% from 'tuya.jinja' import with_tuya_source %}
+        {{ kelvin_to_mireds(
+          state_attr(with_tuya_source(this.entity_id), 'max_color_temp_kelvin')
+        ) }}
+      max_mireds: >
+        {% from 'tuya.jinja' import kelvin_to_mireds %}
+        {% from 'tuya.jinja' import with_tuya_source %}
+        {{ kelvin_to_mireds(
+          state_attr(with_tuya_source(this.entity_id), 'min_color_temp_kelvin')
+        ) }}
+      hs: >
+        {% from 'tuya.jinja' import with_tuya_source %}
+        {% set source = with_tuya_source(this.entity_id) %}
+        {% if is_state_attr(source, 'color_mode', 'hs') %}
+          {{ state_attr(source, 'hs_color') }}
+        {% else %}
+          {{ none }}
+        {% endif %}
+      turn_on:
+        action: light.turn_on
+        target:
+          entity_id: >
+            {% from 'tuya.jinja' import with_tuya_source %}
+            {{ with_tuya_source(this.entity_id) }}
+      turn_off:
+        action: light.turn_off
+        target:
+          entity_id: >
+            {% from 'tuya.jinja' import with_tuya_source %}
+            {{ with_tuya_source(this.entity_id) }}
+      set_level:
+        action: light.turn_on
+        target:
+          entity_id: >
+            {% from 'tuya.jinja' import with_tuya_source %}
+            {{ with_tuya_source(this.entity_id) }}
+        data:
+          brightness: "{{ brightness }}"
+      set_temperature:
+        action: light.turn_on
+        target:
+          entity_id: >
+            {% from 'tuya.jinja' import with_tuya_source %}
+            {{ with_tuya_source(this.entity_id) }}
+        data:
+          brightness: "{{ brightness | default(none) }}"
+          color_temp_kelvin: "{{ color_temp_kelvin }}"
+      set_hs:
+        action: light.turn_on
+        target:
+          entity_id: >
+            {% from 'tuya.jinja' import with_tuya_source %}
+            {{ with_tuya_source(this.entity_id) }}
+        data:
+          brightness: "{{ brightness | default(none) }}"
+          hs_color: "{{ hs }}"
+
+  - name: "Couch Light"
+    <<: *tuya_light_template_config
+
+  - name: "Wall Bulb West"
+    <<: *tuya_light_template_config
+
+  - name: "Wall Bulb East"
+    <<: *tuya_light_template_config
+
+  # Note: Per-light brightness factors live in adaptive_light.jinja. May need
+  # to run Reload jinja templates script in HA after edits.
+  - name: "Adaptive Light Template"
+    <<: &adaptive_light_template_config
+      availability: >
+        {% from 'adaptive_light.jinja' import with_adaptive_source %}
+        {% if this.entity_id.endswith('_adaptive') %}
+          {{ with_adaptive_source(this.entity_id) | has_value }}
+        {% else %}
+          {{ false }}
+        {% endif %}
+      state: >
+        {% from 'adaptive_light.jinja' import with_adaptive_source %}
+        {{ is_state(with_adaptive_source(this.entity_id), 'on') }}
+      level: >
+        {% from 'adaptive_light.jinja' import with_adaptive_source %}
+        {% from 'adaptive_light.jinja' import brightness_factor %}
+        {% from 'adaptive_light.jinja' import scaled_brightness_for_adaptive %}
+        {{ scaled_brightness_for_adaptive(
+          state_attr(with_adaptive_source(this.entity_id), 'brightness'),
+          brightness_factor(this.entity_id)
+        ) }}
+      temperature: >
+        {% from 'adaptive_light.jinja' import with_adaptive_source %}
+        {% from 'tuya.jinja' import kelvin_to_mireds %}
+        {{ kelvin_to_mireds(
+          state_attr(with_adaptive_source(this.entity_id), 'color_temp_kelvin')
+        ) }}
+      min_mireds: >
+        {% from 'adaptive_light.jinja' import with_adaptive_source %}
+        {% from 'tuya.jinja' import kelvin_to_mireds %}
+        {{ kelvin_to_mireds(
+          state_attr(with_adaptive_source(this.entity_id), 'max_color_temp_kelvin')
+        ) }}
+      max_mireds: >
+        {% from 'adaptive_light.jinja' import with_adaptive_source %}
+        {% from 'tuya.jinja' import kelvin_to_mireds %}
+        {{ kelvin_to_mireds(
+          state_attr(with_adaptive_source(this.entity_id), 'min_color_temp_kelvin')
+        ) }}
+      hs: >
+        {% from 'adaptive_light.jinja' import with_adaptive_source %}
+        {% set source = with_adaptive_source(this.entity_id) %}
+        {% if is_state_attr(source, 'color_mode', 'hs') %}
+          {{ state_attr(source, 'hs_color') }}
+        {% else %}
+          {{ none }}
+        {% endif %}
+      turn_on:
+        action: light.turn_on
+        target:
+          entity_id: >
+            {% from 'adaptive_light.jinja' import with_adaptive_source %}
+            {{ with_adaptive_source(this.entity_id) }}
+      turn_off:
+        action: light.turn_off
+        target:
+          entity_id: >
+            {% from 'adaptive_light.jinja' import with_adaptive_source %}
+            {{ with_adaptive_source(this.entity_id) }}
+      set_level:
+        action: light.turn_on
+        target:
+          entity_id: >
+            {% from 'adaptive_light.jinja' import with_adaptive_source %}
+            {{ with_adaptive_source(this.entity_id) }}
+        data:
+          brightness: >
+            {% from 'adaptive_light.jinja' import brightness_factor %}
+            {% from 'adaptive_light.jinja' import scaled_brightness_for_device %}
+            {{ scaled_brightness_for_device(
+              brightness,
+              brightness_factor(this.entity_id)
+            ) }}
+      set_temperature:
+        action: light.turn_on
+        target:
+          entity_id: >
+            {% from 'adaptive_light.jinja' import with_adaptive_source %}
+            {{ with_adaptive_source(this.entity_id) }}
+        data:
+          brightness: >
+            {% from 'adaptive_light.jinja' import brightness_factor %}
+            {% from 'adaptive_light.jinja' import scaled_brightness_for_device %}
+            {{ scaled_brightness_for_device(
+              brightness | default(none),
+              brightness_factor(this.entity_id)
+            ) }}
+          color_temp_kelvin: "{{ color_temp_kelvin }}"
+      set_hs:
+        action: light.turn_on
+        target:
+          entity_id: >
+            {% from 'adaptive_light.jinja' import with_adaptive_source %}
+            {{ with_adaptive_source(this.entity_id) }}
+        data:
+          brightness: >
+            {% from 'adaptive_light.jinja' import brightness_factor %}
+            {% from 'adaptive_light.jinja' import scaled_brightness_for_device %}
+            {{ scaled_brightness_for_device(
+              brightness | default(none),
+              brightness_factor(this.entity_id)
+            ) }}
+          hs_color: "{{ hs }}"
+
+  - name: "Office Lamp Adaptive"
+    <<: *adaptive_light_template_config
+
+- sensor:
+  - name: Template Debug
+    <<: &anchor_test
+      state: >
+        {% from 'tuya.jinja' import with_tuya_source %}
+        {{ with_tuya_source(this.entity_id) }}
+  - name: Template Debug 2
+    <<: *anchor_test
+  - name: Couch Light Last Brightness
+    state: "{{ state_attr('light.couch_light', 'brightness') }}"

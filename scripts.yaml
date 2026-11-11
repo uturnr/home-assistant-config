@@ -1,0 +1,211 @@
+send_critical_notification:
+  alias: Send Critical Notification
+  fields:
+    message:
+      description: The message content
+      example: Motion detected
+  sequence:
+  - service: notify.mobile_app_cphone
+    data:
+      message: '{{ message | default(''Missing message'') }}'
+      data:
+        push:
+          sound:
+            name: default
+            critical: 1
+            volume: 1
+  mode: queued
+  icon: mdi:exclamation-thick
+lzw45_pixel_effect:
+  alias: LZW45 Pixel Effect
+  description: Sets the pixel effects for the Inovelli LZW45 LED Strip
+  mode: restart
+  fields:
+    service:
+      description: (required) The name of the service. OpenZwave (Beta) -> 'ozw.set_config_parameter'
+        OpenZwave (1.4) -> 'zwave.set_config_parameter' Zwave JS -> 'zwave_js.set_config_parameter'
+      example: zwave_js/bulk_set_partial_config_parameters
+    lzw45:
+      description: (required) The entity_id for the lzw45 LED Strip.
+      example: light.laundry_room_light_strip
+    effect:
+      description: (required) The desired effect - static, blink, breath, color-wipe,
+        color-wipe-reverse-inverse, color-wipe-random, random-color, single-dynamic,
+        multi-dynamic, rainbow, rainbow-cycle, scan, dual-scan, fade, running-lights,
+        twinkle, twinkle-random, twinkle-fade, twinkle-fade-random, sparkle, flash-sparkle,
+        hyper-sparkle, strobe, blink-rainbow, chase-white, chase-color, chase-random,
+        chase-rainbow, chase-flash, chase-flash-random, chase-rainbow-white, chase-blackout,
+        chase-blackout-rainbow, color-sweep-random, running-color, running-red-blue,
+        running-random, larson-scanner, comet, fireworks, fireworks-random, merry-christmas,
+        circus-combustus, halloween, aurora
+      example: breath
+    brightness_pct:
+      description: (optional) The brightness percent, 0 - 99.  Defaults to 99 if omitted.
+      example: '99'
+  variables:
+    service: '{{ service | default(''zwave_js.bulk_set_partial_config_parameters'')
+      }}
+
+      '
+    entity_id: '{{ lzw45 | default(''light.laundry_room_light_strip'') }}
+
+      '
+    byte1: "{%- set effect = effect | default(states('input_select.laundry_strip_pixel_effect'),
+      true) %} {%- set effects = [\n  'static',\n  'blink',\n  'breath',\n  'color-wipe',\n
+      \ 'color-wipe-reverse-inverse',\n  'color-wipe-random',\n  'random-color',\n
+      \ 'single-dynamic',\n  'multi-dynamic',\n  'rainbow',\n  'rainbow-cycle',\n
+      \ 'scan',\n  'dual-scan',\n  'fade',\n  'running-lights',\n  'twinkle',\n  'twinkle-random',\n
+      \ 'twinkle-fade',\n  'twinkle-fade-random',\n  'sparkle',\n  'flash-sparkle',\n
+      \ 'hyper-sparkle',\n  'strobe',\n  'blink-rainbow',\n  'chase-white',\n  'chase-color',\n
+      \ 'chase-random',\n  'chase-rainbow',\n  'chase-flash',\n  'chase-flash-random',\n
+      \ 'chase-rainbow-white',\n  'chase-blackout',\n  'chase-blackout-rainbow',\n
+      \ 'color-sweep-random',\n  'running-color',\n  'running-red-blue',\n  'running-random',\n
+      \ 'larson-scanner',\n  'comet',\n  'fireworks',\n  'fireworks-random',\n  'merry-christmas',\n
+      \ 'circus-combustus',\n  'halloween',\n  'aurora'\n] %} {{ effects.index(effect)
+      + 1 if effect in effects else 1 }}\n"
+    byte2: "{%- set pct = (brightness_pct | default(99)) | int %} {%- if 0 <= pct
+      <= 99 %}\n  {{ pct }}\n{%- else %}\n  99\n{%- endif %}\n"
+    bytes: '{{ byte2 * 2**8 + byte1 }}
+
+      '
+  sequence:
+  - condition: template
+    value_template: '{{ entity_id != 0 }}'
+  - service: '{{ service }}'
+    data:
+      entity_id: '{{ entity_id }}'
+      parameter: 31
+      value: '{{ bytes }}'
+restart:
+  alias: Restart Home Assistant
+  icon: mdi:restart
+  sequence:
+  - service: homeassistant.restart
+shuffle_music_on_tv:
+  alias: Shuffle Music on TV
+  icon: mdi:music-box-multiple
+  sequence:
+  - service: media_player.turn_on
+    entity_id: media_player.living_room_tv
+  - service: media_player.select_source
+    entity_id: media_player.living_room_tv
+    data:
+      source: Plex - Stream for Free
+  - wait_template: '{{ is_state(''media_player.living_room_tv'', ''on'') }}'
+    timeout: 00:00:10
+  - service: plex.scan_for_clients
+  - wait_template: '{{ not is_state(''media_player.plex_plex_for_roku_living_room_tv'',
+      ''unavailable'') }}'
+    timeout: 00:00:10
+    continue_on_timeout: false
+  - service: media_player.play_media
+    entity_id: media_player.plex_plex_for_roku_living_room_tv
+    data:
+      media_content_type: playlist
+      media_content_id: '{ "playlist_name": "All Music", "shuffle": "1" }'
+radioparadise_tv:
+  alias: Play Radio Paradise on TV
+  icon: mdi:music-box-multiple
+  sequence:
+  - service: media_player.turn_on
+    entity_id: media_player.living_room_tv
+  - service: media_player.select_source
+    entity_id: media_player.living_room_tv
+    data:
+      source: Radio Paradise
+spotify_tv:
+  alias: Play Spotify on TV
+  icon: mdi:music-box-multiple
+  sequence:
+  - service: media_player.turn_on
+    entity_id: media_player.living_room_tv
+  - service: media_player.select_source
+    entity_id: media_player.living_room_tv
+    data:
+      source: Spotify Music
+  - delay: 00:00:05
+  - service: remote.send_command
+    entity_id: remote.living_room_tv
+    data:
+      command: select
+  - delay: 00:00:05
+  - service: remote.send_command
+    entity_id: remote.living_room_tv
+    data:
+      command: down
+  - delay: 00:00:05
+  - service: remote.send_command
+    entity_id: remote.living_room_tv
+    data:
+      command: select
+  - delay: 00:00:05
+  - service: remote.send_command
+    entity_id: remote.living_room_tv
+    data:
+      command: select
+desk_down:
+  alias: Desk down
+  sequence:
+  - device_id: 14712aee05af26d34f61a64c52c52ca1
+    domain: button
+    entity_id: 6d80902ae8beef653c2ed074b4e10a11
+    type: press
+  mode: single
+  icon: mdi:table-chair
+desk_up:
+  alias: Desk up
+  sequence:
+  - device_id: 14712aee05af26d34f61a64c52c52ca1
+    domain: button
+    entity_id: fec629c4bd52261593f3281786126ad2
+    type: press
+  mode: single
+  icon: mdi:human-handsdown
+aurora_cool_fan_light:
+  alias: Aurora Cool - Fan light
+  mode: restart
+  sequence:
+  - repeat:
+      while:
+      - condition: template
+        value_template: '{{ is_state(''input_boolean.aurora_toggle_fan_light'', ''on'')
+          }}'
+      sequence:
+      - target:
+          entity_id: light.fan_light
+        data:
+          rgb_color:
+          - 10
+          - 120
+          - 255
+          transition: 3
+        action: light.turn_on
+      - delay: 3
+      - target:
+          entity_id: light.fan_light
+        data:
+          rgb_color:
+          - 0
+          - 200
+          - 180
+          transition: 3
+        action: light.turn_on
+      - delay: 3
+      - target:
+          entity_id: light.fan_light
+        data:
+          rgb_color:
+          - 80
+          - 0
+          - 180
+          transition: 3
+        action: light.turn_on
+      - delay: 3
+  description: ''
+reload_jinja_templates:
+  sequence:
+  - action: homeassistant.reload_custom_templates
+    metadata: {}
+    data: {}
+  alias: Reload jinja templates
+  description: ''

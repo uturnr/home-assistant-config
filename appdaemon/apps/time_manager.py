@@ -4,7 +4,7 @@ import datetime
 #
 # Time Manager
 #
-# Args:
+# Args: 
 #
 
 class TimeManager(hass.Hass):

@@ -1,0 +1,341 @@
+- id: '1601439026093'
+  name: Bedroom Bright
+  entities:
+    light.bedroom_light:
+      brightness: 255
+      state: 'on'
+  icon: mdi:lightbulb-on
+- id: '1601439405876'
+  name: Bedroom Dim
+  entities:
+    light.bedroom_light:
+      brightness: 90
+      state: 'on'
+  icon: mdi:lightbulb
+- id: '1603765966306'
+  name: Bedroom Ultra-Dim
+  entities:
+    light.bedroom_light:
+      brightness: 52
+      state: 'on'
+  icon: mdi:moon-waning-crescent
+- id: living_room_bright
+  name: Living Room Bright
+  entities:
+    light.living_room_lights:
+      state: 'on'
+      brightness: 255
+- id: living_room_medium
+  name: Living Room Medium
+  entities:
+    light.living_room_lights:
+      state: 'on'
+      brightness: 150
+- id: living_room_ultra_dim
+  name: Living Room Ultra-Dim
+  entities:
+    light.living_room_lights:
+      state: 'on'
+      brightness: 1
+- id: living_room_neutral_color
+  name: Living Room Neutral Color
+  entities:
+    light.living_room_lights:
+      state: 'on'
+      color_temp: 250
+- id: day_lights
+  name: Day Lights
+  entities:
+    light.main_lights:
+      state: 'on'
+    switch.adaptive_lighting_default:
+      state: 'on'
+  icon: mdi:weather-sunny
+- id: '1666571976022'
+  name: Night Lights
+  entities:
+    switch.adaptive_lighting_default:
+      configuration: {}
+      brightness_pct:
+      color_temp_kelvin:
+      color_temp_mired:
+      rgb_color:
+      xy_color:
+      hs_color:
+      sun_position:
+      force_rgb_color:
+      icon: mdi:theme-light-dark
+      friendly_name: 'Adaptive Lighting: Default'
+      state: 'off'
+    light.kitchen_light:
+      supported_color_modes:
+      - brightness
+      color_mode: brightness
+      brightness: 129
+      friendly_name: Kitchen Light
+      supported_features: 32
+      state: 'on'
+    light.desk_light_strip:
+      min_color_temp_kelvin: 2700
+      max_color_temp_kelvin: 6500
+      supported_color_modes:
+      - color_temp
+      - hs
+      color_mode:
+      brightness:
+      color_temp_kelvin:
+      hs_color:
+      rgb_color:
+      xy_color:
+      icon: mdi:led-strip
+      friendly_name: Desk Light Strip
+      supported_features: 32
+      state: 'off'
+    light.non_kitchen_main_lights_night:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
+      effect_list:
+      - blink
+      - breathe
+      - candle
+      - channel_change
+      - colorloop
+      - cosmos
+      - enchant
+      - finish_effect
+      - fireplace
+      - glisten
+      - none
+      - okay
+      - opal
+      - sparkle
+      - stop_effect
+      - stop_hue_effect
+      - sunbeam
+      - sunrise
+      - sunset
+      - underwater
+      supported_color_modes:
+      - color_temp
+      - hs
+      - xy
+      effect:
+      color_mode: color_temp
+      brightness: 71
+      color_temp_kelvin: 2829
+      hs_color:
+      - 28.131
+      - 61.75
+      rgb_color:
+      - 255
+      - 171
+      - 98
+      xy_color:
+      - 0.512
+      - 0.385
+      entity_id:
+      - light.living_room_lights_night
+      - light.laundry_room_lights
+      friendly_name: Non Kitchen Main Lights Night
+      supported_features: 44
+      state: 'on'
+  icon: mdi:lightbulb-night
+  metadata:
+    switch.adaptive_lighting_default:
+      entity_only: true
+    light.kitchen_light:
+      entity_only: true
+    light.desk_light_strip:
+      entity_only: true
+    light.non_kitchen_main_lights_night:
+      entity_only: true
+- id: '1695523514473'
+  name: Privacy
+  entities:
+    light.front_porch_door_glass_custom_fade:
+      supported_color_modes:
+      - brightness
+      friendly_name: Front Door Glass Transparency
+      supported_features: 0
+      state: 'off'
+  icon: mdi:eye-off
+  metadata:
+    light.front_porch_door_glass_custom_fade:
+      entity_only: true
+- id: '1695523543536'
+  name: Privacy off
+  entities:
+    light.front_porch_door_glass_custom_fade:
+      supported_color_modes:
+      - brightness
+      color_mode: brightness
+      brightness: 255
+      friendly_name: Front Door Glass Transparency
+      supported_features: 0
+      state: 'on'
+  icon: mdi:eye
+  metadata:
+    light.front_porch_door_glass_custom_fade:
+      entity_only: true
+- id: '1724375659619'
+  name: Go to Bed Lights
+  entities:
+    light.main_lights:
+      min_color_temp_kelvin: 2702
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 370
+      effect_list: []
+      supported_color_modes:
+      - color_temp
+      - hs
+      effect:
+      color_mode: color_temp
+      brightness: 17
+      color_temp_kelvin: 2702
+      color_temp: 370
+      hs_color:
+      - 28.391
+      - 65.659
+      rgb_color:
+      - 255
+      - 166
+      - 87
+      xy_color:
+      - 0.526
+      - 0.387
+      entity_id:
+      - light.living_room_lights
+      - light.west_lights
+      icon: mdi:lightbulb-group
+      friendly_name: Main Lights
+      supported_features: 36
+      state: 'on'
+    light.couch_light:
+      min_color_temp_kelvin: 2702
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 370
+      effect_list: []
+      supported_color_modes:
+      - color_temp
+      - hs
+      effect:
+      color_mode:
+      brightness:
+      color_temp_kelvin:
+      color_temp:
+      hs_color:
+      rgb_color:
+      xy_color:
+      raw_state: false
+      friendly_name: Couch Light
+      supported_features: 23
+      state: 'off'
+  icon: mdi:sleep
+  metadata:
+    light.main_lights:
+      entity_only: true
+    light.couch_light:
+      entity_only: true
+- id: '1731117689620'
+  name: Working Late Lights
+  entities:
+    light.main_lights:
+      min_color_temp_kelvin: 2702
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 370
+      effect_list: []
+      supported_color_modes:
+      - color_temp
+      - hs
+      effect:
+      color_mode: color_temp
+      brightness: 193
+      color_temp_kelvin: 3424
+      color_temp: 292
+      hs_color:
+      - 27.252
+      - 46.451
+      rgb_color:
+      - 255
+      - 190
+      - 136
+      xy_color:
+      - 0.46
+      - 0.376
+      entity_id:
+      - light.living_room_lights
+      - light.west_lights
+      icon: mdi:lightbulb-group
+      friendly_name: Main Lights
+      supported_features: 36
+      state: 'on'
+    light.kitchen_light:
+      supported_color_modes:
+      - brightness
+      color_mode: brightness
+      brightness: 219
+      friendly_name: Kitchen Light
+      supported_features: 32
+      state: 'on'
+    switch.adaptive_lighting_default:
+      configuration: {}
+      brightness_pct:
+      color_temp_kelvin:
+      color_temp_mired:
+      rgb_color:
+      xy_color:
+      hs_color:
+      sun_position:
+      force_rgb_color:
+      icon: mdi:theme-light-dark
+      friendly_name: 'Adaptive Lighting: Default'
+      state: 'off'
+  icon: mdi:alarm-light-outline
+  metadata:
+    light.main_lights:
+      entity_only: true
+    light.kitchen_light:
+      entity_only: true
+    switch.adaptive_lighting_default:
+      entity_only: true
+- id: '1749129941299'
+  name: Away lights
+  entities:
+    light.wall_lights:
+      min_color_temp_kelvin: 2702
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 370
+      effect_list:
+      supported_color_modes:
+      - color_temp
+      - hs
+      effect:
+      color_mode: color_temp
+      brightness: 128
+      color_temp_kelvin: 4694
+      color_temp: 213
+      hs_color:
+      - 26.782
+      - 23.566
+      rgb_color:
+      - 255
+      - 222
+      - 195
+      xy_color:
+      - 0.384
+      - 0.354
+      entity_id:
+      - light.wall_bulb_west
+      - light.wall_bulb_east
+      icon: mdi:lightbulb-group
+      friendly_name: Wall Lights
+      supported_features: 4
+      state: 'on'
+  icon: mdi:door-closed-lock
+  metadata:
+    light.wall_lights:
+      entity_only: true
